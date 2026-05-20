@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Koperasi Simpan Pinjam</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -18,7 +20,7 @@
 <style>
 
 body{
-background:#f4f6f9;
+background:#f3f4f6;
 }
 
 .sidebar{
@@ -59,6 +61,7 @@ margin-top:100px;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -99,14 +102,17 @@ Login
 <div class="col-md-2 sidebar p-3">
 
 <h3 class="text-center mb-4">
+
 <i class="bi bi-bank2"></i>
 Koperasi
+
 </h3>
 
 <ul class="nav flex-column">
 
 <li>
-<a class="nav-link" href="#"
+<a class="nav-link"
+href="#"
 onclick="showSection('dashboard')">
 
 Dashboard
@@ -115,7 +121,18 @@ Dashboard
 </li>
 
 <li>
-<a class="nav-link" href="#"
+<a class="nav-link"
+href="#"
+onclick="showSection('kasAwal')">
+
+Kas Awal
+
+</a>
+</li>
+
+<li>
+<a class="nav-link"
+href="#"
 onclick="showSection('anggota')">
 
 Anggota
@@ -124,7 +141,8 @@ Anggota
 </li>
 
 <li>
-<a class="nav-link" href="#"
+<a class="nav-link"
+href="#"
 onclick="showSection('pinjaman')">
 
 Pinjaman
@@ -133,7 +151,8 @@ Pinjaman
 </li>
 
 <li>
-<a class="nav-link" href="#"
+<a class="nav-link"
+href="#"
 onclick="showSection('pembayaran')">
 
 Pembayaran
@@ -142,10 +161,11 @@ Pembayaran
 </li>
 
 <li>
-<a class="nav-link" href="#"
+<a class="nav-link"
+href="#"
 onclick="showSection('kas')">
 
-Kas
+Kas Bendahara
 
 </a>
 </li>
@@ -167,7 +187,8 @@ Logout
 <div class="col-md-10 p-4">
 
 <!-- DASHBOARD -->
-<div id="dashboard" class="section active">
+<div id="dashboard"
+class="section active">
 
 <h3 class="mb-4">
 Dashboard
@@ -176,39 +197,128 @@ Dashboard
 <div class="row g-4">
 
 <div class="col-md-3">
+
 <div class="card card-box p-3">
+
 <h6>Total Anggota</h6>
+
 <h2 id="dAnggota">0</h2>
+
 </div>
+
 </div>
 
 <div class="col-md-3">
-<div class="card card-box p-3">
-<h6>Total Pinjaman</h6>
-<h2 id="dPinjaman">Rp0</h2>
-</div>
-</div>
 
-<div class="col-md-3">
 <div class="card card-box p-3">
+
 <h6>Total Kas</h6>
+
 <h2 id="dKas">Rp0</h2>
+
 </div>
+
 </div>
 
 <div class="col-md-3">
+
 <div class="card card-box p-3">
-<h6>Tunggakan</h6>
+
+<h6>Total Pinjaman</h6>
+
+<h2 id="dPinjaman">Rp0</h2>
+
+</div>
+
+</div>
+
+<div class="col-md-3">
+
+<div class="card card-box p-3">
+
+<h6>Total Tunggakan</h6>
+
 <h2 id="dTunggakan">Rp0</h2>
+
 </div>
+
 </div>
+
+</div>
+
+</div>
+
+<!-- KAS AWAL -->
+<div id="kasAwal"
+class="section">
+
+<h3 class="mb-3">
+Input Kas Awal
+</h3>
+
+<div class="card card-box p-4">
+
+<input type="number"
+id="kasAwalJumlah"
+class="form-control mb-3"
+placeholder="Jumlah kas awal">
+
+<button class="btn btn-primary"
+onclick="simpanKasAwal()">
+
+Simpan Kas Awal
+
+</button>
+
+</div>
+
+</div>
+
+<!-- ANGGOTA -->
+<div id="anggota"
+class="section">
+
+<div class="d-flex justify-content-between mb-3">
+
+<h3>Data Anggota</h3>
+
+<button class="btn btn-primary"
+onclick="tambahAnggota()">
+
+Tambah Anggota
+
+</button>
+
+</div>
+
+<div class="card card-box p-3">
+
+<table class="table table-bordered">
+
+<thead>
+
+<tr>
+
+<th>Nama</th>
+<th>HP</th>
+<th>Alamat</th>
+<th>Aksi</th>
+
+</tr>
+
+</thead>
+
+<tbody id="tbodyAnggota"></tbody>
+
+</table>
 
 </div>
 
 </div>
 
 <!-- PINJAMAN -->
-<div id="pinjaman" class="section">
+<div id="pinjaman"
+class="section">
 
 <div class="d-flex justify-content-between mb-3">
 
@@ -217,9 +327,9 @@ Dashboard
 <div>
 
 <button class="btn btn-success"
-onclick="modalPinjaman()">
+onclick="tambahPinjaman()">
 
-Tambah
+Tambah Pinjaman
 
 </button>
 
@@ -230,7 +340,7 @@ PDF
 
 </button>
 
-<button class="btn btn-primary"
+<button class="btn btn-success"
 onclick="exportExcel()">
 
 Excel
@@ -244,7 +354,7 @@ Excel
 <div class="card card-box p-3">
 
 <input type="text"
-id="search"
+id="searchPinjam"
 class="form-control mb-3"
 placeholder="Cari nama..."
 onkeyup="renderPinjaman()">
@@ -275,8 +385,64 @@ onkeyup="renderPinjaman()">
 
 </div>
 
+<!-- PEMBAYARAN -->
+<div id="pembayaran"
+class="section">
+
+<h3 class="mb-3">
+Pembayaran
+</h3>
+
+<div class="card card-box p-4">
+
+<select id="bayarNama"
+class="form-select mb-3"
+onchange="infoHutang()">
+
+<option value="">
+Pilih Peminjam
+</option>
+
+</select>
+
+<div class="alert alert-info">
+
+<div>
+Total Pinjaman:
+<b id="iPinjam">Rp0</b>
+</div>
+
+<div>
+Sudah Bayar:
+<b id="iBayar">Rp0</b>
+</div>
+
+<div>
+Sisa Hutang:
+<b id="iSisa">Rp0</b>
+</div>
+
+</div>
+
+<input type="number"
+id="jumlahBayar"
+class="form-control mb-3"
+placeholder="Jumlah bayar">
+
+<button class="btn btn-warning"
+onclick="simpanPembayaran()">
+
+Simpan Pembayaran
+
+</button>
+
+</div>
+
+</div>
+
 <!-- KAS -->
-<div id="kas" class="section">
+<div id="kas"
+class="section">
 
 <h3 class="mb-3">
 Kas Bendahara
@@ -317,7 +483,8 @@ Kas Bendahara
 
 <script>
 
-const API_URL = "https://script.google.com/macros/s/AKfycbzglGyG5YFfP6UlBWYNGmNzr7HB6O0vDWtPqlb248OUv7wngly8091YwjxTgCpg1HwF/exec";
+const API_URL =
+"https://script.google.com/macros/s/AKfycbwhPM1tJwu9RbjlNguezt-ONkJXpnSAGM1SIndpPxMOfl-1LljamdgllviocjE3PhMo/exec";
 
 let anggota = [];
 let pinjaman = [];
@@ -325,15 +492,13 @@ let pembayaran = [];
 let kas = [];
 
 
-// =======================
+// ======================
 // LOGIN
-// =======================
+// ======================
 
 function login(){
 
-let pass = password.value;
-
-if(pass=="psp123"){
+if(password.value=="12345"){
 
 localStorage.setItem("login","ya");
 
@@ -370,21 +535,9 @@ loadData();
 }
 
 
-// =======================
-// FORMAT RUPIAH
-// =======================
-
-function rupiah(x){
-
-return "Rp" +
-Number(x).toLocaleString("id-ID");
-
-}
-
-
-// =======================
+// ======================
 // SHOW SECTION
-// =======================
+// ======================
 
 function showSection(id){
 
@@ -397,9 +550,21 @@ document.getElementById(id)
 }
 
 
-// =======================
-// LOAD DATA REALTIME
-// =======================
+// ======================
+// FORMAT RUPIAH
+// ======================
+
+function rupiah(x){
+
+return "Rp" +
+Number(x).toLocaleString("id-ID");
+
+}
+
+
+// ======================
+// LOAD DATA
+// ======================
 
 async function loadData(){
 
@@ -415,39 +580,44 @@ pembayaran = data.pembayaran;
 
 kas = data.kas;
 
+renderAnggota();
+
 renderPinjaman();
 
 renderKas();
 
-updateDashboard();
+updateDropdownBayar();
+
+dashboard();
 
 }
 
 
-// =======================
+// ======================
 // DASHBOARD
-// =======================
+// ======================
 
-function updateDashboard(){
+function dashboard(){
 
-dAnggota.innerText = anggota.length;
+dAnggota.innerText =
+anggota.length;
+
+let totalKasMasuk = kas
+.filter(x=>x[3]=="Pemasukan")
+.reduce((a,b)=>a+Number(b[5]),0);
+
+let totalKasKeluar = kas
+.filter(x=>x[3]=="Pengeluaran")
+.reduce((a,b)=>a+Number(b[5]),0);
+
+dKas.innerText =
+rupiah(totalKasMasuk-totalKasKeluar);
 
 let totalPinjaman = pinjaman
 .reduce((a,b)=>a+Number(b[3]),0);
 
 dPinjaman.innerText =
 rupiah(totalPinjaman);
-
-let masuk = kas
-.filter(x=>x[3]=="Pemasukan")
-.reduce((a,b)=>a+Number(b[5]),0);
-
-let keluar = kas
-.filter(x=>x[3]=="Pengeluaran")
-.reduce((a,b)=>a+Number(b[5]),0);
-
-dKas.innerText =
-rupiah(masuk-keluar);
 
 let totalBayar = pembayaran
 .reduce((a,b)=>a+Number(b[3]),0);
@@ -458,15 +628,241 @@ rupiah(totalPinjaman-totalBayar);
 }
 
 
-// =======================
-// RENDER PINJAMAN
-// =======================
+// ======================
+// SIMPAN KAS AWAL
+// ======================
 
-function renderPinjaman(){
+async function simpanKasAwal(){
+
+let jumlah = kasAwalJumlah.value;
+
+if(jumlah=="") return;
+
+await fetch(API_URL,{
+
+method:"POST",
+
+body:JSON.stringify({
+
+aksi:"tambah",
+
+jenis:"kas",
+
+data:[
+Date.now(),
+new Date(),
+new Date().toISOString().split('T')[0],
+"Pemasukan",
+"Kas Awal",
+jumlah
+]
+
+})
+
+});
+
+alert("Kas awal berhasil");
+
+loadData();
+
+}
+
+
+// ======================
+// TAMBAH ANGGOTA
+// ======================
+
+async function tambahAnggota(){
+
+let nama = prompt("Nama");
+
+if(!nama) return;
+
+let hp = prompt("HP");
+
+let alamat = prompt("Alamat");
+
+await fetch(API_URL,{
+
+method:"POST",
+
+body:JSON.stringify({
+
+aksi:"tambah",
+
+jenis:"anggota",
+
+data:[
+Date.now(),
+new Date(),
+nama,
+hp,
+alamat
+]
+
+})
+
+});
+
+loadData();
+
+}
+
+
+// ======================
+// RENDER ANGGOTA
+// ======================
+
+function renderAnggota(){
 
 let html = "";
 
-let cari = search.value.toLowerCase();
+anggota.forEach(x=>{
+
+html += `
+<tr>
+
+<td>${x[2]}</td>
+<td>${x[3]}</td>
+<td>${x[4]}</td>
+
+<td>
+
+<button class="btn btn-danger btn-sm"
+onclick="hapusAnggota('${x[0]}')">
+
+Hapus
+
+</button>
+
+</td>
+
+</tr>
+`;
+
+});
+
+tbodyAnggota.innerHTML = html;
+
+}
+
+
+// ======================
+// HAPUS ANGGOTA
+// ======================
+
+async function hapusAnggota(id){
+
+if(!confirm("Hapus anggota?"))
+return;
+
+await fetch(API_URL,{
+
+method:"POST",
+
+body:JSON.stringify({
+
+aksi:"hapus",
+jenis:"anggota",
+data:{id:id}
+
+})
+
+});
+
+loadData();
+
+}
+
+
+// ======================
+// TAMBAH PINJAMAN
+// ======================
+
+async function tambahPinjaman(){
+
+let nama = prompt("Nama anggota");
+
+let jumlah = prompt("Jumlah pinjaman");
+
+if(!nama || !jumlah)
+return;
+
+let tanggal =
+new Date().toISOString().split('T')[0];
+
+
+// ======================
+// SIMPAN PINJAMAN
+// ======================
+
+await fetch(API_URL,{
+
+method:"POST",
+
+body:JSON.stringify({
+
+aksi:"tambah",
+
+jenis:"pinjaman",
+
+data:[
+Date.now(),
+new Date(),
+nama,
+jumlah,
+tanggal
+]
+
+})
+
+});
+
+
+// ======================
+// KAS BERKURANG
+// ======================
+
+await fetch(API_URL,{
+
+method:"POST",
+
+body:JSON.stringify({
+
+aksi:"tambah",
+
+jenis:"kas",
+
+data:[
+Date.now()+1,
+new Date(),
+tanggal,
+"Pengeluaran",
+"Pinjaman ke "+nama,
+jumlah
+]
+
+})
+
+});
+
+alert("Pinjaman berhasil");
+
+loadData();
+
+}
+
+
+// ======================
+// RENDER PINJAMAN
+// ======================
+
+function renderPinjaman(){
+
+let cari =
+searchPinjam.value.toLowerCase();
+
+let html = "";
 
 pinjaman.forEach(x=>{
 
@@ -475,15 +871,19 @@ let nama = x[2];
 if(!nama.toLowerCase().includes(cari))
 return;
 
-let totalPinjaman = Number(x[3]);
+let totalPinjam =
+Number(x[3]);
 
-let bayar = pembayaran
+let totalBayar =
+pembayaran
 .filter(p=>p[2]==nama)
 .reduce((a,b)=>a+Number(b[3]),0);
 
-let sisa = totalPinjaman-bayar;
+let sisa =
+totalPinjam-totalBayar;
 
-let status = sisa<=0
+let status =
+sisa<=0
 ? `<span class="badge bg-success">Lunas</span>`
 : `<span class="badge bg-danger">Belum</span>`;
 
@@ -492,19 +892,12 @@ html += `
 
 <td>${nama}</td>
 <td>${x[4]}</td>
-<td>${rupiah(totalPinjaman)}</td>
-<td>${rupiah(bayar)}</td>
+<td>${rupiah(totalPinjam)}</td>
+<td>${rupiah(totalBayar)}</td>
 <td>${rupiah(sisa)}</td>
 <td>${status}</td>
 
 <td>
-
-<button class="btn btn-primary btn-sm"
-onclick="bayar('${nama}')">
-
-Bayar
-
-</button>
 
 <button class="btn btn-danger btn-sm"
 onclick="hapusPinjaman('${x[0]}')">
@@ -525,151 +918,13 @@ tbodyPinjaman.innerHTML = html;
 }
 
 
-// =======================
-// TAMBAH PINJAMAN
-// =======================
-
-async function modalPinjaman(){
-
-let nama = prompt("Nama");
-
-let jumlah = prompt("Jumlah");
-
-let tanggal = new Date()
-.toISOString()
-.split('T')[0];
-
-let id = Date.now();
-
-let data = [
-id,
-new Date(),
-nama,
-jumlah,
-tanggal
-];
-
-await fetch(API_URL,{
-
-method:"POST",
-
-body:JSON.stringify({
-
-aksi:"tambah",
-jenis:"pinjaman",
-data:data
-
-})
-
-});
-
-
-// =======================
-// KAS BERKURANG
-// =======================
-
-await fetch(API_URL,{
-
-method:"POST",
-
-body:JSON.stringify({
-
-aksi:"tambah",
-jenis:"kas",
-
-data:[
-Date.now()+1,
-new Date(),
-tanggal,
-"Pengeluaran",
-"Pinjaman ke "+nama,
-jumlah
-]
-
-})
-
-});
-
-loadData();
-
-}
-
-
-// =======================
-// BAYAR
-// =======================
-
-async function bayar(nama){
-
-let jumlah = prompt("Jumlah bayar");
-
-if(!jumlah) return;
-
-let tanggal = new Date()
-.toISOString()
-.split('T')[0];
-
-await fetch(API_URL,{
-
-method:"POST",
-
-body:JSON.stringify({
-
-aksi:"tambah",
-jenis:"pembayaran",
-
-data:[
-Date.now(),
-new Date(),
-nama,
-jumlah,
-tanggal,
-"Cicilan"
-]
-
-})
-
-});
-
-
-// =======================
-// KAS MASUK
-// =======================
-
-await fetch(API_URL,{
-
-method:"POST",
-
-body:JSON.stringify({
-
-aksi:"tambah",
-jenis:"kas",
-
-data:[
-Date.now()+1,
-new Date(),
-tanggal,
-"Pemasukan",
-"Pembayaran dari "+nama,
-jumlah
-]
-
-})
-
-});
-
-loadData();
-
-}
-
-
-// =======================
+// ======================
 // HAPUS PINJAMAN
-// =======================
+// ======================
 
 async function hapusPinjaman(id){
 
-if(!confirm("Hapus data?"))
+if(!confirm("Hapus pinjaman?"))
 return;
 
 await fetch(API_URL,{
@@ -691,9 +946,149 @@ loadData();
 }
 
 
-// =======================
+// ======================
+// DROPDOWN PEMBAYARAN
+// ======================
+
+function updateDropdownBayar(){
+
+let html =
+`<option value="">Pilih Peminjam</option>`;
+
+pinjaman.forEach(x=>{
+
+html += `
+<option value="${x[2]}">
+${x[2]}
+</option>
+`;
+
+});
+
+bayarNama.innerHTML = html;
+
+}
+
+
+// ======================
+// INFO HUTANG
+// ======================
+
+function infoHutang(){
+
+let nama = bayarNama.value;
+
+let dataPinjam =
+pinjaman.find(x=>x[2]==nama);
+
+if(!dataPinjam) return;
+
+let totalPinjam =
+Number(dataPinjam[3]);
+
+let totalBayar =
+pembayaran
+.filter(x=>x[2]==nama)
+.reduce((a,b)=>a+Number(b[3]),0);
+
+let sisa =
+totalPinjam-totalBayar;
+
+iPinjam.innerText =
+rupiah(totalPinjam);
+
+iBayar.innerText =
+rupiah(totalBayar);
+
+iSisa.innerText =
+rupiah(sisa);
+
+}
+
+
+// ======================
+// SIMPAN PEMBAYARAN
+// ======================
+
+async function simpanPembayaran(){
+
+let nama = bayarNama.value;
+
+let jumlah =
+jumlahBayar.value;
+
+if(!nama || !jumlah)
+return;
+
+let tanggal =
+new Date().toISOString().split('T')[0];
+
+
+// ======================
+// PEMBAYARAN
+// ======================
+
+await fetch(API_URL,{
+
+method:"POST",
+
+body:JSON.stringify({
+
+aksi:"tambah",
+
+jenis:"pembayaran",
+
+data:[
+Date.now(),
+new Date(),
+nama,
+jumlah,
+tanggal,
+"Cicilan"
+]
+
+})
+
+});
+
+
+// ======================
+// KAS MASUK
+// ======================
+
+await fetch(API_URL,{
+
+method:"POST",
+
+body:JSON.stringify({
+
+aksi:"tambah",
+
+jenis:"kas",
+
+data:[
+Date.now()+1,
+new Date(),
+tanggal,
+"Pemasukan",
+"Pembayaran dari "+nama,
+jumlah
+]
+
+})
+
+});
+
+alert("Pembayaran berhasil");
+
+loadData();
+
+}
+
+
+// ======================
 // RENDER KAS
-// =======================
+// ======================
 
 function renderKas(){
 
@@ -719,13 +1114,14 @@ tbodyKas.innerHTML = html;
 }
 
 
-// =======================
+// ======================
 // EXPORT PDF
-// =======================
+// ======================
 
 function exportPDF(){
 
-const { jsPDF } = window.jspdf;
+const { jsPDF } =
+window.jspdf;
 
 const doc = new jsPDF();
 
@@ -760,9 +1156,9 @@ doc.save("laporan.pdf");
 }
 
 
-// =======================
+// ======================
 // EXPORT EXCEL
-// =======================
+// ======================
 
 function exportExcel(){
 
@@ -780,9 +1176,11 @@ Jumlah:x[3]
 
 });
 
-const wb = XLSX.utils.book_new();
+const wb =
+XLSX.utils.book_new();
 
-const ws = XLSX.utils.json_to_sheet(data);
+const ws =
+XLSX.utils.json_to_sheet(data);
 
 XLSX.utils.book_append_sheet(
 wb,
