@@ -1,774 +1,919 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Aplikasi Simpan Pinjam Bendahara</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<title>Aplikasi Bendahara Simpan Pinjam</title>
 
-  <!-- DataTables -->
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-  <!-- Icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
 
-  <!-- jsPDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+body{
+  background:#f4f6f9;
+}
 
-  <style>
-    body{
-      background:#f4f6f9;
-    }
+.sidebar{
+  background:#1f2937;
+  min-height:100vh;
+  color:white;
+}
 
-    .sidebar{
-      min-height:100vh;
-      background:#1f2937;
-      color:white;
-    }
+.sidebar .nav-link{
+  color:#d1d5db;
+  margin-bottom:5px;
+}
 
-    .sidebar .nav-link{
-      color:#d1d5db;
-    }
+.sidebar .nav-link:hover{
+  background:#374151;
+  border-radius:10px;
+  color:white;
+}
 
-    .sidebar .nav-link:hover,
-    .sidebar .nav-link.active{
-      background:#374151;
-      color:white;
-      border-radius:10px;
-    }
+.card-box{
+  border:none;
+  border-radius:18px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
 
-    .card-dashboard{
-      border:none;
-      border-radius:20px;
-      box-shadow:0 3px 10px rgba(0,0,0,0.08);
-    }
+.table thead{
+  background:#111827;
+  color:white;
+}
 
-    .menu-title{
-      font-weight:bold;
-      margin-bottom:20px;
-    }
+.section{
+  display:none;
+}
 
-    .table-responsive{
-      overflow:auto;
-    }
+.section.active{
+  display:block;
+}
 
-    .badge-status{
-      font-size:13px;
-    }
-  </style>
+</style>
 </head>
 <body>
 
 <div class="container-fluid">
-  <div class="row">
+<div class="row">
 
-    <!-- SIDEBAR -->
-    <div class="col-md-2 sidebar p-3">
+<!-- SIDEBAR -->
+<div class="col-md-2 sidebar p-3">
 
-      <h4 class="text-center mb-4">
-        <i class="bi bi-bank2"></i>
-        Simpan Pinjam
-      </h4>
+<h3 class="mb-4 text-center">
+<i class="bi bi-bank2"></i>
+Koperasi
+</h3>
 
-      <ul class="nav flex-column gap-2">
+<ul class="nav flex-column">
 
-        <li class="nav-item">
-          <a class="nav-link active" href="#dashboard">
-            <i class="bi bi-speedometer2"></i>
-            Dashboard
-          </a>
-        </li>
+<li class="nav-item">
+<a class="nav-link" href="#" onclick="showSection('dashboard')">
+<i class="bi bi-speedometer2"></i>
+Dashboard
+</a>
+</li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="#anggota">
-            <i class="bi bi-people"></i>
-            Daftar Anggota
-          </a>
-        </li>
+<li class="nav-item">
+<a class="nav-link" href="#" onclick="showSection('anggota')">
+<i class="bi bi-people"></i>
+Anggota
+</a>
+</li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="#pinjaman">
-            <i class="bi bi-cash-stack"></i>
-            Data Pinjaman
-          </a>
-        </li>
+<li class="nav-item">
+<a class="nav-link" href="#" onclick="showSection('pinjaman')">
+<i class="bi bi-cash-stack"></i>
+Pinjaman
+</a>
+</li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="#pembayaran">
-            <i class="bi bi-wallet2"></i>
-            Pembayaran
-          </a>
-        </li>
+<li class="nav-item">
+<a class="nav-link" href="#" onclick="showSection('pembayaran')">
+<i class="bi bi-wallet2"></i>
+Pembayaran
+</a>
+</li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="#kas">
-            <i class="bi bi-piggy-bank"></i>
-            Kas Bendahara
-          </a>
-        </li>
+<li class="nav-item">
+<a class="nav-link" href="#" onclick="showSection('kas')">
+<i class="bi bi-piggy-bank"></i>
+Kas
+</a>
+</li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="#laporan">
-            <i class="bi bi-file-earmark-bar-graph"></i>
-            Laporan
-          </a>
-        </li>
+<li class="nav-item">
+<a class="nav-link" href="#" onclick="showSection('laporan')">
+<i class="bi bi-file-earmark-bar-graph"></i>
+Laporan
+</a>
+</li>
 
-      </ul>
-    </div>
+</ul>
+</div>
 
-    <!-- CONTENT -->
-    <div class="col-md-10 p-4">
+<!-- CONTENT -->
+<div class="col-md-10 p-4">
 
-      <!-- DASHBOARD -->
-      <section id="dashboard">
+<!-- DASHBOARD -->
+<div id="dashboard" class="section active">
 
-        <h3 class="menu-title">
-          Dashboard Bendahara
-        </h3>
+<h3 class="mb-4">Dashboard</h3>
 
-        <div class="row g-4">
+<div class="row g-4">
 
-          <div class="col-md-3">
-            <div class="card card-dashboard p-3">
-              <h6>Total Anggota</h6>
-              <h2 id="totalAnggota">0</h2>
-            </div>
-          </div>
+<div class="col-md-3">
+<div class="card card-box p-3">
+<h6>Total Anggota</h6>
+<h2 id="dAnggota">0</h2>
+</div>
+</div>
 
-          <div class="col-md-3">
-            <div class="card card-dashboard p-3">
-              <h6>Total Pinjaman</h6>
-              <h2 id="totalPinjaman">Rp0</h2>
-            </div>
-          </div>
+<div class="col-md-3">
+<div class="card card-box p-3">
+<h6>Total Pinjaman</h6>
+<h2 id="dPinjaman">Rp0</h2>
+</div>
+</div>
 
-          <div class="col-md-3">
-            <div class="card card-dashboard p-3">
-              <h6>Sisa Kas</h6>
-              <h2 id="saldoKas">Rp0</h2>
-            </div>
-          </div>
+<div class="col-md-3">
+<div class="card card-box p-3">
+<h6>Total Kas</h6>
+<h2 id="dKas">Rp0</h2>
+</div>
+</div>
 
-          <div class="col-md-3">
-            <div class="card card-dashboard p-3">
-              <h6>Total Tunggakan</h6>
-              <h2 id="totalTunggakan">Rp0</h2>
-            </div>
-          </div>
+<div class="col-md-3">
+<div class="card card-box p-3">
+<h6>Tunggakan</h6>
+<h2 id="dTunggakan">Rp0</h2>
+</div>
+</div>
 
-        </div>
-      </section>
+</div>
+</div>
 
-      <hr class="my-4">
+<!-- ANGGOTA -->
+<div id="anggota" class="section">
 
-      <!-- ANGGOTA -->
-      <section id="anggota">
+<div class="d-flex justify-content-between mb-3">
+<h3>Daftar Anggota</h3>
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h3>Daftar Anggota</h3>
+<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAnggota">
+<i class="bi bi-plus-circle"></i>
+Tambah
+</button>
+</div>
 
-          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAnggota">
-            <i class="bi bi-plus-circle"></i>
-            Tambah Anggota
-          </button>
-        </div>
+<div class="card card-box p-3">
 
-        <div class="card p-3">
-          <div class="table-responsive">
-            <table class="table table-bordered table-striped" id="tableAnggota">
-              <thead class="table-dark">
-                <tr>
-                  <th>No</th>
-                  <th>Nama</th>
-                  <th>No HP</th>
-                  <th>Alamat</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
+<table class="table table-bordered">
+<thead>
+<tr>
+<th>Nama</th>
+<th>HP</th>
+<th>Alamat</th>
+<th>Aksi</th>
+</tr>
+</thead>
 
-      </section>
+<tbody id="tbodyAnggota"></tbody>
 
-      <hr class="my-4">
+</table>
 
-      <!-- PINJAMAN -->
-      <section id="pinjaman">
+</div>
+</div>
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h3>Data Pinjaman</h3>
+<!-- PINJAMAN -->
+<div id="pinjaman" class="section">
 
-          <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalPinjaman">
-            <i class="bi bi-plus-circle"></i>
-            Tambah Pinjaman
-          </button>
-        </div>
+<div class="d-flex justify-content-between mb-3">
 
-        <div class="card p-3">
+<h3>Pinjaman</h3>
 
-          <input type="text" class="form-control mb-3" id="searchPinjaman" placeholder="Cari nama peminjam...">
+<button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalPinjaman">
+<i class="bi bi-plus-circle"></i>
+Tambah
+</button>
 
-          <div class="table-responsive">
-            <table class="table table-bordered table-striped" id="tablePinjaman">
-              <thead class="table-dark">
-                <tr>
-                  <th>Nama</th>
-                  <th>Tanggal</th>
-                  <th>Jumlah Pinjaman</th>
-                  <th>Total Bayar</th>
-                  <th>Sisa</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
+</div>
 
-          <button class="btn btn-danger mt-3" onclick="exportPDF()">
-            <i class="bi bi-file-earmark-pdf"></i>
-            Export PDF
-          </button>
+<div class="card card-box p-3">
 
-        </div>
-      </section>
+<input type="text"
+class="form-control mb-3"
+placeholder="Cari nama..."
+onkeyup="cariPinjaman(this.value)">
 
-      <hr class="my-4">
+<table class="table table-bordered">
 
-      <!-- PEMBAYARAN -->
-      <section id="pembayaran">
+<thead>
+<tr>
+<th>Nama</th>
+<th>Tanggal</th>
+<th>Pinjaman</th>
+<th>Total Bayar</th>
+<th>Sisa</th>
+<th>Status</th>
+<th>Aksi</th>
+</tr>
+</thead>
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h3>Pembayaran Pinjaman</h3>
+<tbody id="tbodyPinjaman"></tbody>
 
-          <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalPembayaran">
-            <i class="bi bi-wallet2"></i>
-            Tambah Pembayaran
-          </button>
-        </div>
+</table>
 
-        <div class="card p-3">
-          <div class="table-responsive">
-            <table class="table table-bordered table-striped" id="tablePembayaran">
-              <thead class="table-dark">
-                <tr>
-                  <th>Nama</th>
-                  <th>Tanggal</th>
-                  <th>Jumlah Bayar</th>
-                  <th>Keterangan</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
+</div>
+</div>
 
-      </section>
+<!-- PEMBAYARAN -->
+<div id="pembayaran" class="section">
 
-      <hr class="my-4">
+<div class="d-flex justify-content-between mb-3">
 
-      <!-- KAS -->
-      <section id="kas">
+<h3>Pembayaran</h3>
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h3>Kas Bendahara</h3>
+<button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalPembayaran">
+Tambah
+</button>
 
-          <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modalKas">
-            <i class="bi bi-cash"></i>
-            Tambah Transaksi
-          </button>
-        </div>
+</div>
 
-        <div class="card p-3">
+<div class="card card-box p-3">
 
-          <div class="table-responsive">
-            <table class="table table-bordered table-striped" id="tableKas">
-              <thead class="table-dark">
-                <tr>
-                  <th>Tanggal</th>
-                  <th>Jenis</th>
-                  <th>Keterangan</th>
-                  <th>Jumlah</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
+<table class="table table-bordered">
 
-        </div>
+<thead>
+<tr>
+<th>Nama</th>
+<th>Tanggal</th>
+<th>Jumlah</th>
+<th>Status</th>
+<th>Aksi</th>
+</tr>
+</thead>
 
-      </section>
+<tbody id="tbodyPembayaran"></tbody>
 
-      <hr class="my-4">
+</table>
 
-      <!-- LAPORAN -->
-      <section id="laporan">
+</div>
+</div>
 
-        <h3 class="mb-3">Ringkasan Laporan</h3>
+<!-- KAS -->
+<div id="kas" class="section">
 
-        <div class="row g-3">
+<div class="d-flex justify-content-between mb-3">
 
-          <div class="col-md-4">
-            <button class="btn btn-outline-primary w-100" onclick="laporanBulanan()">
-              <i class="bi bi-calendar-month"></i>
-              Laporan Bulanan
-            </button>
-          </div>
+<h3>Kas Bendahara</h3>
 
-          <div class="col-md-4">
-            <button class="btn btn-outline-success w-100" onclick="laporanTahunan()">
-              <i class="bi bi-calendar3"></i>
-              Laporan Tahunan
-            </button>
-          </div>
+<button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modalKas">
+Tambah
+</button>
 
-          <div class="col-md-4">
-            <button class="btn btn-outline-danger w-100" onclick="exportPDF()">
-              <i class="bi bi-filetype-pdf"></i>
-              Cetak PDF
-            </button>
-          </div>
+</div>
 
-        </div>
+<div class="card card-box p-3">
 
-        <div class="card mt-4 p-4">
-          <div id="hasilLaporan">
-            Pilih laporan untuk melihat ringkasan.
-          </div>
-        </div>
+<table class="table table-bordered">
 
-      </section>
+<thead>
+<tr>
+<th>Tanggal</th>
+<th>Jenis</th>
+<th>Keterangan</th>
+<th>Jumlah</th>
+<th>Aksi</th>
+</tr>
+</thead>
 
-    </div>
-  </div>
+<tbody id="tbodyKas"></tbody>
+
+</table>
+
+</div>
+</div>
+
+<!-- LAPORAN -->
+<div id="laporan" class="section">
+
+<h3 class="mb-3">Laporan</h3>
+
+<div class="row g-3">
+
+<div class="col-md-4">
+<button class="btn btn-outline-primary w-100" onclick="laporanBulanan()">
+Laporan Bulanan
+</button>
+</div>
+
+<div class="col-md-4">
+<button class="btn btn-outline-success w-100" onclick="laporanTahunan()">
+Laporan Tahunan
+</button>
+</div>
+
+</div>
+
+<div class="card card-box mt-4 p-4">
+
+<div id="hasilLaporan">
+Belum ada laporan.
+</div>
+
+</div>
+
+</div>
+
+</div>
+</div>
 </div>
 
 <!-- MODAL ANGGOTA -->
 <div class="modal fade" id="modalAnggota">
-  <div class="modal-dialog">
-    <div class="modal-content">
+<div class="modal-dialog">
+<div class="modal-content">
 
-      <div class="modal-header">
-        <h5>Tambah Anggota</h5>
-      </div>
+<div class="modal-header">
+<h5>Tambah Anggota</h5>
+</div>
 
-      <div class="modal-body">
+<div class="modal-body">
 
-        <input type="text" class="form-control mb-2" id="namaAnggota" placeholder="Nama">
-        <input type="text" class="form-control mb-2" id="hpAnggota" placeholder="No HP">
-        <textarea class="form-control" id="alamatAnggota" placeholder="Alamat"></textarea>
+<input type="text" id="aNama" class="form-control mb-2" placeholder="Nama">
 
-      </div>
+<input type="text" id="aHp" class="form-control mb-2" placeholder="No HP">
 
-      <div class="modal-footer">
-        <button class="btn btn-primary" onclick="tambahAnggota()">Simpan</button>
-      </div>
+<textarea id="aAlamat" class="form-control" placeholder="Alamat"></textarea>
 
-    </div>
-  </div>
+</div>
+
+<div class="modal-footer">
+<button class="btn btn-primary" onclick="tambahAnggota()">
+Simpan
+</button>
+</div>
+
+</div>
+</div>
 </div>
 
 <!-- MODAL PINJAMAN -->
 <div class="modal fade" id="modalPinjaman">
-  <div class="modal-dialog">
-    <div class="modal-content">
+<div class="modal-dialog">
+<div class="modal-content">
 
-      <div class="modal-header">
-        <h5>Tambah Pinjaman</h5>
-      </div>
+<div class="modal-header">
+<h5>Tambah Pinjaman</h5>
+</div>
 
-      <div class="modal-body">
+<div class="modal-body">
 
-        <input type="text" class="form-control mb-2" id="pinjamNama" placeholder="Nama">
-        <input type="number" class="form-control mb-2" id="pinjamJumlah" placeholder="Jumlah Pinjaman">
-        <input type="date" class="form-control" id="pinjamTanggal">
+<input type="text" id="pNama" class="form-control mb-2" placeholder="Nama">
 
-      </div>
+<input type="number" id="pJumlah" class="form-control mb-2" placeholder="Jumlah">
 
-      <div class="modal-footer">
-        <button class="btn btn-success" onclick="tambahPinjaman()">Simpan</button>
-      </div>
+<input type="date" id="pTanggal" class="form-control">
 
-    </div>
-  </div>
+</div>
+
+<div class="modal-footer">
+<button class="btn btn-success" onclick="tambahPinjaman()">
+Simpan
+</button>
+</div>
+
+</div>
+</div>
 </div>
 
 <!-- MODAL PEMBAYARAN -->
 <div class="modal fade" id="modalPembayaran">
-  <div class="modal-dialog">
-    <div class="modal-content">
+<div class="modal-dialog">
+<div class="modal-content">
 
-      <div class="modal-header">
-        <h5>Pembayaran</h5>
-      </div>
+<div class="modal-header">
+<h5>Pembayaran</h5>
+</div>
 
-      <div class="modal-body">
+<div class="modal-body">
 
-        <input type="text" class="form-control mb-2" id="bayarNama" placeholder="Nama">
-        <input type="number" class="form-control mb-2" id="bayarJumlah" placeholder="Jumlah Bayar">
-        <input type="date" class="form-control mb-2" id="bayarTanggal">
+<input type="text" id="bNama" class="form-control mb-2" placeholder="Nama">
 
-        <select class="form-select" id="bayarStatus">
-          <option value="Cicilan">Cicilan</option>
-          <option value="Lunas">Lunas</option>
-        </select>
+<input type="number" id="bJumlah" class="form-control mb-2" placeholder="Jumlah">
 
-      </div>
+<input type="date" id="bTanggal" class="form-control mb-2">
 
-      <div class="modal-footer">
-        <button class="btn btn-warning" onclick="tambahPembayaran()">Simpan</button>
-      </div>
+<select id="bStatus" class="form-select">
+<option>Cicilan</option>
+<option>Lunas</option>
+</select>
 
-    </div>
-  </div>
+</div>
+
+<div class="modal-footer">
+<button class="btn btn-warning" onclick="tambahPembayaran()">
+Simpan
+</button>
+</div>
+
+</div>
+</div>
 </div>
 
 <!-- MODAL KAS -->
 <div class="modal fade" id="modalKas">
-  <div class="modal-dialog">
-    <div class="modal-content">
+<div class="modal-dialog">
+<div class="modal-content">
 
-      <div class="modal-header">
-        <h5>Transaksi Kas</h5>
-      </div>
+<div class="modal-header">
+<h5>Kas</h5>
+</div>
 
-      <div class="modal-body">
+<div class="modal-body">
 
-        <input type="date" class="form-control mb-2" id="kasTanggal">
+<input type="date" id="kTanggal" class="form-control mb-2">
 
-        <select class="form-select mb-2" id="kasJenis">
-          <option value="Pemasukan">Pemasukan</option>
-          <option value="Pengeluaran">Pengeluaran</option>
-        </select>
+<select id="kJenis" class="form-select mb-2">
+<option>Pemasukan</option>
+<option>Pengeluaran</option>
+</select>
 
-        <input type="text" class="form-control mb-2" id="kasKet" placeholder="Keterangan">
+<input type="text" id="kKet" class="form-control mb-2" placeholder="Keterangan">
 
-        <input type="number" class="form-control" id="kasJumlah" placeholder="Jumlah">
+<input type="number" id="kJumlah" class="form-control" placeholder="Jumlah">
 
-      </div>
+</div>
 
-      <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="tambahKas()">Simpan</button>
-      </div>
+<div class="modal-footer">
+<button class="btn btn-secondary" onclick="tambahKas()">
+Simpan
+</button>
+</div>
 
-    </div>
-  </div>
+</div>
+</div>
 </div>
 
 <script>
+
+const WEBAPP_URL = "PASTE_URL_APPS_SCRIPT_DISINI";
 
 let anggota = [];
 let pinjaman = [];
 let pembayaran = [];
 let kas = [];
 
-function rupiah(angka){
-  return "Rp" + Number(angka).toLocaleString("id-ID");
+function rupiah(x){
+return "Rp" + Number(x).toLocaleString("id-ID");
 }
 
-function tambahAnggota(){
+function showSection(id){
 
-  const data = {
-    nama: document.getElementById('namaAnggota').value,
-    hp: document.getElementById('hpAnggota').value,
-    alamat: document.getElementById('alamatAnggota').value
-  };
+document.querySelectorAll('.section')
+.forEach(x=>x.classList.remove('active'));
 
-  anggota.push(data);
-
-  renderAnggota();
-  updateDashboard();
-
-  // KIRIM KE GOOGLE SHEET
-  kirimGoogleSheet("anggota", data);
-
-  alert("Anggota berhasil ditambahkan");
-}
-
-function renderAnggota(){
-
-  let tbody = "";
-
-  anggota.forEach((a,i)=>{
-    tbody += `
-      <tr>
-        <td>${i+1}</td>
-        <td>${a.nama}</td>
-        <td>${a.hp}</td>
-        <td>${a.alamat}</td>
-      </tr>
-    `;
-  });
-
-  document.querySelector("#tableAnggota tbody").innerHTML = tbody;
-}
-
-function tambahPinjaman(){
-
-  const data = {
-    nama: document.getElementById('pinjamNama').value,
-    jumlah: Number(document.getElementById('pinjamJumlah').value),
-    tanggal: document.getElementById('pinjamTanggal').value
-  };
-
-  pinjaman.push(data);
-
-  renderPinjaman();
-  updateDashboard();
-
-  kirimGoogleSheet("pinjaman", data);
-
-  alert("Pinjaman berhasil ditambahkan");
-}
-
-function tambahPembayaran(){
-
-  const data = {
-    nama: document.getElementById('bayarNama').value,
-    jumlah: Number(document.getElementById('bayarJumlah').value),
-    tanggal: document.getElementById('bayarTanggal').value,
-    status: document.getElementById('bayarStatus').value
-  };
-
-  pembayaran.push(data);
-
-  renderPembayaran();
-  renderPinjaman();
-  updateDashboard();
-
-  kirimGoogleSheet("pembayaran", data);
-
-  alert("Pembayaran berhasil ditambahkan");
-}
-
-function tambahKas(){
-
-  const data = {
-    tanggal: document.getElementById('kasTanggal').value,
-    jenis: document.getElementById('kasJenis').value,
-    ket: document.getElementById('kasKet').value,
-    jumlah: Number(document.getElementById('kasJumlah').value)
-  };
-
-  kas.push(data);
-
-  renderKas();
-  updateDashboard();
-
-  kirimGoogleSheet("kas", data);
-
-  alert("Transaksi kas berhasil");
-}
-
-function renderPinjaman(){
-
-  let tbody = "";
-
-  pinjaman.forEach(p=>{
-
-    let totalBayar = pembayaran
-      .filter(b => b.nama === p.nama)
-      .reduce((a,b)=>a+b.jumlah,0);
-
-    let sisa = p.jumlah - totalBayar;
-
-    let status = sisa <= 0
-      ? '<span class="badge bg-success badge-status">Lunas</span>'
-      : '<span class="badge bg-danger badge-status">Belum Lunas</span>';
-
-    tbody += `
-      <tr>
-        <td>${p.nama}</td>
-        <td>${p.tanggal}</td>
-        <td>${rupiah(p.jumlah)}</td>
-        <td>${rupiah(totalBayar)}</td>
-        <td>${rupiah(sisa)}</td>
-        <td>${status}</td>
-      </tr>
-    `;
-  });
-
-  document.querySelector("#tablePinjaman tbody").innerHTML = tbody;
-}
-
-function renderPembayaran(){
-
-  let tbody = "";
-
-  pembayaran.forEach(p=>{
-
-    tbody += `
-      <tr>
-        <td>${p.nama}</td>
-        <td>${p.tanggal}</td>
-        <td>${rupiah(p.jumlah)}</td>
-        <td>${p.status}</td>
-      </tr>
-    `;
-  });
-
-  document.querySelector("#tablePembayaran tbody").innerHTML = tbody;
-}
-
-function renderKas(){
-
-  let tbody = "";
-
-  kas.forEach(k=>{
-
-    tbody += `
-      <tr>
-        <td>${k.tanggal}</td>
-        <td>${k.jenis}</td>
-        <td>${k.ket}</td>
-        <td>${rupiah(k.jumlah)}</td>
-      </tr>
-    `;
-  });
-
-  document.querySelector("#tableKas tbody").innerHTML = tbody;
+document.getElementById(id)
+.classList.add('active');
 }
 
 function updateDashboard(){
 
-  document.getElementById('totalAnggota').innerText = anggota.length;
+document.getElementById('dAnggota')
+.innerText = anggota.length;
 
-  let totalPinjam = pinjaman.reduce((a,b)=>a+b.jumlah,0);
+let totalPinjam = pinjaman.reduce((a,b)=>a+b.jumlah,0);
 
-  document.getElementById('totalPinjaman').innerText = rupiah(totalPinjam);
+document.getElementById('dPinjaman')
+.innerText = rupiah(totalPinjam);
 
-  let pemasukan = kas
-    .filter(k=>k.jenis==="Pemasukan")
-    .reduce((a,b)=>a+b.jumlah,0);
+let masuk = kas
+.filter(x=>x.jenis=="Pemasukan")
+.reduce((a,b)=>a+b.jumlah,0);
 
-  let pengeluaran = kas
-    .filter(k=>k.jenis==="Pengeluaran")
-    .reduce((a,b)=>a+b.jumlah,0);
+let keluar = kas
+.filter(x=>x.jenis=="Pengeluaran")
+.reduce((a,b)=>a+b.jumlah,0);
 
-  document.getElementById('saldoKas').innerText =
-    rupiah(pemasukan - pengeluaran);
+document.getElementById('dKas')
+.innerText = rupiah(masuk-keluar);
 
-  let totalBayar = pembayaran.reduce((a,b)=>a+b.jumlah,0);
+let totalBayar = pembayaran
+.reduce((a,b)=>a+b.jumlah,0);
 
-  document.getElementById('totalTunggakan').innerText =
-    rupiah(totalPinjam - totalBayar);
+document.getElementById('dTunggakan')
+.innerText = rupiah(totalPinjam-totalBayar);
+}
+
+async function kirimData(jenis,data){
+
+await fetch(WEBAPP_URL,{
+method:"POST",
+body:JSON.stringify({
+jenis:jenis,
+data:data
+})
+});
+}
+
+function tambahAnggota(){
+
+let data = {
+id:Date.now(),
+nama:aNama.value,
+hp:aHp.value,
+alamat:aAlamat.value
+};
+
+anggota.push(data);
+
+renderAnggota();
+
+kirimData("anggota",data);
+
+updateDashboard();
+
+}
+
+function renderAnggota(){
+
+let html = "";
+
+anggota.forEach((x,i)=>{
+
+html += `
+<tr>
+
+<td>${x.nama}</td>
+<td>${x.hp}</td>
+<td>${x.alamat}</td>
+
+<td>
+
+<button class="btn btn-warning btn-sm"
+onclick="editAnggota(${i})">
+
+<i class="bi bi-pencil"></i>
+
+</button>
+
+<button class="btn btn-danger btn-sm"
+onclick="hapusAnggota(${i})">
+
+<i class="bi bi-trash"></i>
+
+</button>
+
+</td>
+
+</tr>
+`;
+});
+
+tbodyAnggota.innerHTML = html;
+}
+
+function editAnggota(i){
+
+let x = anggota[i];
+
+x.nama = prompt("Nama",x.nama);
+x.hp = prompt("HP",x.hp);
+x.alamat = prompt("Alamat",x.alamat);
+
+renderAnggota();
+}
+
+function hapusAnggota(i){
+
+if(confirm("Hapus data?")){
+
+anggota.splice(i,1);
+
+renderAnggota();
+
+updateDashboard();
+
+}
+}
+
+function tambahPinjaman(){
+
+let data = {
+id:Date.now(),
+nama:pNama.value,
+jumlah:Number(pJumlah.value),
+tanggal:pTanggal.value
+};
+
+pinjaman.push(data);
+
+renderPinjaman();
+
+kirimData("pinjaman",data);
+
+updateDashboard();
+
+}
+
+function renderPinjaman(){
+
+let html = "";
+
+pinjaman.forEach((x,i)=>{
+
+let bayar = pembayaran
+.filter(b=>b.nama==x.nama)
+.reduce((a,b)=>a+b.jumlah,0);
+
+let sisa = x.jumlah-bayar;
+
+let status = sisa<=0
+? `<span class="badge bg-success">Lunas</span>`
+: `<span class="badge bg-danger">Belum</span>`;
+
+html += `
+<tr>
+
+<td>${x.nama}</td>
+<td>${x.tanggal}</td>
+<td>${rupiah(x.jumlah)}</td>
+<td>${rupiah(bayar)}</td>
+<td>${rupiah(sisa)}</td>
+<td>${status}</td>
+
+<td>
+
+<button class="btn btn-warning btn-sm"
+onclick="editPinjaman(${i})">
+
+<i class="bi bi-pencil"></i>
+
+</button>
+
+<button class="btn btn-danger btn-sm"
+onclick="hapusPinjaman(${i})">
+
+<i class="bi bi-trash"></i>
+
+</button>
+
+</td>
+
+</tr>
+`;
+});
+
+tbodyPinjaman.innerHTML = html;
+}
+
+function editPinjaman(i){
+
+let x = pinjaman[i];
+
+x.nama = prompt("Nama",x.nama);
+x.jumlah = Number(prompt("Jumlah",x.jumlah));
+x.tanggal = prompt("Tanggal",x.tanggal);
+
+renderPinjaman();
+
+updateDashboard();
+}
+
+function hapusPinjaman(i){
+
+if(confirm("Hapus data?")){
+
+pinjaman.splice(i,1);
+
+renderPinjaman();
+
+updateDashboard();
+
+}
+}
+
+function tambahPembayaran(){
+
+let data = {
+id:Date.now(),
+nama:bNama.value,
+jumlah:Number(bJumlah.value),
+tanggal:bTanggal.value,
+status:bStatus.value
+};
+
+pembayaran.push(data);
+
+renderPembayaran();
+
+renderPinjaman();
+
+kirimData("pembayaran",data);
+
+updateDashboard();
+
+}
+
+function renderPembayaran(){
+
+let html = "";
+
+pembayaran.forEach((x,i)=>{
+
+html += `
+<tr>
+
+<td>${x.nama}</td>
+<td>${x.tanggal}</td>
+<td>${rupiah(x.jumlah)}</td>
+<td>${x.status}</td>
+
+<td>
+
+<button class="btn btn-warning btn-sm"
+onclick="editPembayaran(${i})">
+
+<i class="bi bi-pencil"></i>
+
+</button>
+
+<button class="btn btn-danger btn-sm"
+onclick="hapusPembayaran(${i})">
+
+<i class="bi bi-trash"></i>
+
+</button>
+
+</td>
+
+</tr>
+`;
+});
+
+tbodyPembayaran.innerHTML = html;
+}
+
+function editPembayaran(i){
+
+let x = pembayaran[i];
+
+x.nama = prompt("Nama",x.nama);
+x.jumlah = Number(prompt("Jumlah",x.jumlah));
+
+renderPembayaran();
+
+renderPinjaman();
+
+updateDashboard();
+}
+
+function hapusPembayaran(i){
+
+if(confirm("Hapus pembayaran?")){
+
+pembayaran.splice(i,1);
+
+renderPembayaran();
+
+renderPinjaman();
+
+updateDashboard();
+
+}
+}
+
+function tambahKas(){
+
+let data = {
+id:Date.now(),
+tanggal:kTanggal.value,
+jenis:kJenis.value,
+ket:kKet.value,
+jumlah:Number(kJumlah.value)
+};
+
+kas.push(data);
+
+renderKas();
+
+kirimData("kas",data);
+
+updateDashboard();
+
+}
+
+function renderKas(){
+
+let html = "";
+
+kas.forEach((x,i)=>{
+
+html += `
+<tr>
+
+<td>${x.tanggal}</td>
+<td>${x.jenis}</td>
+<td>${x.ket}</td>
+<td>${rupiah(x.jumlah)}</td>
+
+<td>
+
+<button class="btn btn-warning btn-sm"
+onclick="editKas(${i})">
+
+<i class="bi bi-pencil"></i>
+
+</button>
+
+<button class="btn btn-danger btn-sm"
+onclick="hapusKas(${i})">
+
+<i class="bi bi-trash"></i>
+
+</button>
+
+</td>
+
+</tr>
+`;
+});
+
+tbodyKas.innerHTML = html;
+}
+
+function editKas(i){
+
+let x = kas[i];
+
+x.ket = prompt("Keterangan",x.ket);
+x.jumlah = Number(prompt("Jumlah",x.jumlah));
+
+renderKas();
+
+updateDashboard();
+}
+
+function hapusKas(i){
+
+if(confirm("Hapus kas?")){
+
+kas.splice(i,1);
+
+renderKas();
+
+updateDashboard();
+
+}
+}
+
+function cariPinjaman(keyword){
+
+keyword = keyword.toLowerCase();
+
+let rows = tbodyPinjaman.querySelectorAll("tr");
+
+rows.forEach(r=>{
+
+r.style.display =
+r.innerText.toLowerCase().includes(keyword)
+? ""
+: "none";
+
+});
 }
 
 function laporanBulanan(){
 
-  document.getElementById('hasilLaporan').innerHTML = `
-    <h5>Laporan Bulanan</h5>
-    <p>Total pinjaman bulan ini:
-      <b>${rupiah(
-        pinjaman.reduce((a,b)=>a+b.jumlah,0)
-      )}</b>
-    </p>
+hasilLaporan.innerHTML = `
+<h4>Laporan Bulanan</h4>
 
-    <p>Total pembayaran:
-      <b>${rupiah(
-        pembayaran.reduce((a,b)=>a+b.jumlah,0)
-      )}</b>
-    </p>
-  `;
+<p>Total Pinjaman:
+<b>${rupiah(
+pinjaman.reduce((a,b)=>a+b.jumlah,0)
+)}</b></p>
+
+<p>Total Pembayaran:
+<b>${rupiah(
+pembayaran.reduce((a,b)=>a+b.jumlah,0)
+)}</b></p>
+`;
 }
 
 function laporanTahunan(){
 
-  document.getElementById('hasilLaporan').innerHTML = `
-    <h5>Laporan Tahunan</h5>
+hasilLaporan.innerHTML = `
+<h4>Laporan Tahunan</h4>
 
-    <p>Total transaksi kas:
-      <b>${kas.length}</b>
-    </p>
+<p>Total Anggota:
+<b>${anggota.length}</b></p>
 
-    <p>Total anggota:
-      <b>${anggota.length}</b>
-    </p>
-  `;
-}
-
-function exportPDF(){
-
-  const { jsPDF } = window.jspdf;
-
-  const doc = new jsPDF();
-
-  doc.text("Data Pinjaman", 14, 15);
-
-  let rows = [];
-
-  pinjaman.forEach(p=>{
-
-    let totalBayar = pembayaran
-      .filter(b => b.nama === p.nama)
-      .reduce((a,b)=>a+b.jumlah,0);
-
-    rows.push([
-      p.nama,
-      p.tanggal,
-      rupiah(p.jumlah),
-      rupiah(totalBayar),
-      rupiah(p.jumlah-totalBayar)
-    ]);
-  });
-
-  doc.autoTable({
-    head:[[
-      "Nama",
-      "Tanggal",
-      "Pinjaman",
-      "Bayar",
-      "Sisa"
-    ]],
-    body:rows
-  });
-
-  doc.save("laporan-pinjaman.pdf");
-}
-
-document.getElementById('searchPinjaman')
-.addEventListener('keyup', function(){
-
-  let keyword = this.value.toLowerCase();
-
-  let rows = document.querySelectorAll("#tablePinjaman tbody tr");
-
-  rows.forEach(r=>{
-
-    r.style.display =
-      r.innerText.toLowerCase().includes(keyword)
-      ? ""
-      : "none";
-  });
-});
-
-
-// ============================
-// GOOGLE SHEET INTEGRATION
-// ============================
-
-async function kirimGoogleSheet(jenis, data){
-
-  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxB2qgjtsJt427D-arDzuOksHTuEjV7Ak2hQcpSNZWewIXZ8Ot_fuNwb_5FHCrS-oXC/exec";
-
-  try{
-
-    await fetch(WEBAPP_URL,{
-      method:"POST",
-      body:JSON.stringify({
-        jenis:jenis,
-        data:data
-      })
-    });
-
-  }catch(err){
-
-    console.log(err);
-  }
+<p>Total Kas:
+<b>${rupiah(
+kas.reduce((a,b)=>a+b.jumlah,0)
+)}</b></p>
+`;
 }
 
 </script>
