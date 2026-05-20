@@ -4,113 +4,163 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Aplikasi Bendahara Simpan Pinjam</title>
+<title>Koperasi Simpan Pinjam</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
 <style>
 
 body{
-  background:#f4f6f9;
+background:#f4f6f9;
 }
 
 .sidebar{
-  background:#1f2937;
-  min-height:100vh;
-  color:white;
+background:#111827;
+min-height:100vh;
+color:white;
 }
 
 .sidebar .nav-link{
-  color:#d1d5db;
-  margin-bottom:5px;
+color:#d1d5db;
+margin-bottom:5px;
 }
 
 .sidebar .nav-link:hover{
-  background:#374151;
-  border-radius:10px;
-  color:white;
+background:#374151;
+border-radius:10px;
+color:white;
 }
 
 .card-box{
-  border:none;
-  border-radius:18px;
-  box-shadow:0 3px 10px rgba(0,0,0,0.1);
-}
-
-.table thead{
-  background:#111827;
-  color:white;
+border:none;
+border-radius:18px;
+box-shadow:0 2px 10px rgba(0,0,0,0.1);
 }
 
 .section{
-  display:none;
+display:none;
 }
 
 .section.active{
-  display:block;
+display:block;
+}
+
+.login-box{
+max-width:400px;
+margin:auto;
+margin-top:100px;
 }
 
 </style>
 </head>
+
 <body>
 
+<!-- LOGIN -->
+<div id="loginPage">
+
+<div class="card login-box p-4">
+
+<h3 class="text-center mb-4">
+Login Bendahara
+</h3>
+
+<input type="password"
+id="password"
+class="form-control mb-3"
+placeholder="Password">
+
+<button class="btn btn-primary"
+onclick="login()">
+
+Login
+
+</button>
+
+</div>
+
+</div>
+
+<!-- APP -->
+<div id="appPage" style="display:none;">
+
 <div class="container-fluid">
+
 <div class="row">
 
 <!-- SIDEBAR -->
 <div class="col-md-2 sidebar p-3">
 
-<h3 class="mb-4 text-center">
+<h3 class="text-center mb-4">
 <i class="bi bi-bank2"></i>
 Koperasi
 </h3>
 
 <ul class="nav flex-column">
 
-<li class="nav-item">
-<a class="nav-link" href="#" onclick="showSection('dashboard')">
-<i class="bi bi-speedometer2"></i>
+<li>
+<a class="nav-link" href="#"
+onclick="showSection('dashboard')">
+
 Dashboard
+
 </a>
 </li>
 
-<li class="nav-item">
-<a class="nav-link" href="#" onclick="showSection('anggota')">
-<i class="bi bi-people"></i>
+<li>
+<a class="nav-link" href="#"
+onclick="showSection('anggota')">
+
 Anggota
+
 </a>
 </li>
 
-<li class="nav-item">
-<a class="nav-link" href="#" onclick="showSection('pinjaman')">
-<i class="bi bi-cash-stack"></i>
+<li>
+<a class="nav-link" href="#"
+onclick="showSection('pinjaman')">
+
 Pinjaman
+
 </a>
 </li>
 
-<li class="nav-item">
-<a class="nav-link" href="#" onclick="showSection('pembayaran')">
-<i class="bi bi-wallet2"></i>
+<li>
+<a class="nav-link" href="#"
+onclick="showSection('pembayaran')">
+
 Pembayaran
+
 </a>
 </li>
 
-<li class="nav-item">
-<a class="nav-link" href="#" onclick="showSection('kas')">
-<i class="bi bi-piggy-bank"></i>
+<li>
+<a class="nav-link" href="#"
+onclick="showSection('kas')">
+
 Kas
-</a>
-</li>
 
-<li class="nav-item">
-<a class="nav-link" href="#" onclick="showSection('laporan')">
-<i class="bi bi-file-earmark-bar-graph"></i>
-Laporan
 </a>
 </li>
 
 </ul>
+
+<hr>
+
+<button class="btn btn-danger w-100"
+onclick="logout()">
+
+Logout
+
+</button>
+
 </div>
 
 <!-- CONTENT -->
@@ -119,7 +169,9 @@ Laporan
 <!-- DASHBOARD -->
 <div id="dashboard" class="section active">
 
-<h3 class="mb-4">Dashboard</h3>
+<h3 class="mb-4">
+Dashboard
+</h3>
 
 <div class="row g-4">
 
@@ -152,37 +204,7 @@ Laporan
 </div>
 
 </div>
-</div>
 
-<!-- ANGGOTA -->
-<div id="anggota" class="section">
-
-<div class="d-flex justify-content-between mb-3">
-<h3>Daftar Anggota</h3>
-
-<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAnggota">
-<i class="bi bi-plus-circle"></i>
-Tambah
-</button>
-</div>
-
-<div class="card card-box p-3">
-
-<table class="table table-bordered">
-<thead>
-<tr>
-<th>Nama</th>
-<th>HP</th>
-<th>Alamat</th>
-<th>Aksi</th>
-</tr>
-</thead>
-
-<tbody id="tbodyAnggota"></tbody>
-
-</table>
-
-</div>
 </div>
 
 <!-- PINJAMAN -->
@@ -192,32 +214,57 @@ Tambah
 
 <h3>Pinjaman</h3>
 
-<button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalPinjaman">
-<i class="bi bi-plus-circle"></i>
+<div>
+
+<button class="btn btn-success"
+onclick="modalPinjaman()">
+
 Tambah
+
 </button>
+
+<button class="btn btn-danger"
+onclick="exportPDF()">
+
+PDF
+
+</button>
+
+<button class="btn btn-primary"
+onclick="exportExcel()">
+
+Excel
+
+</button>
+
+</div>
 
 </div>
 
 <div class="card card-box p-3">
 
 <input type="text"
+id="search"
 class="form-control mb-3"
 placeholder="Cari nama..."
-onkeyup="cariPinjaman(this.value)">
+onkeyup="renderPinjaman()">
 
 <table class="table table-bordered">
 
 <thead>
+
 <tr>
+
 <th>Nama</th>
 <th>Tanggal</th>
 <th>Pinjaman</th>
-<th>Total Bayar</th>
+<th>Bayar</th>
 <th>Sisa</th>
 <th>Status</th>
 <th>Aksi</th>
+
 </tr>
+
 </thead>
 
 <tbody id="tbodyPinjaman"></tbody>
@@ -225,67 +272,31 @@ onkeyup="cariPinjaman(this.value)">
 </table>
 
 </div>
-</div>
 
-<!-- PEMBAYARAN -->
-<div id="pembayaran" class="section">
-
-<div class="d-flex justify-content-between mb-3">
-
-<h3>Pembayaran</h3>
-
-<button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalPembayaran">
-Tambah
-</button>
-
-</div>
-
-<div class="card card-box p-3">
-
-<table class="table table-bordered">
-
-<thead>
-<tr>
-<th>Nama</th>
-<th>Tanggal</th>
-<th>Jumlah</th>
-<th>Status</th>
-<th>Aksi</th>
-</tr>
-</thead>
-
-<tbody id="tbodyPembayaran"></tbody>
-
-</table>
-
-</div>
 </div>
 
 <!-- KAS -->
 <div id="kas" class="section">
 
-<div class="d-flex justify-content-between mb-3">
-
-<h3>Kas Bendahara</h3>
-
-<button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modalKas">
-Tambah
-</button>
-
-</div>
+<h3 class="mb-3">
+Kas Bendahara
+</h3>
 
 <div class="card card-box p-3">
 
 <table class="table table-bordered">
 
 <thead>
+
 <tr>
+
 <th>Tanggal</th>
 <th>Jenis</th>
 <th>Keterangan</th>
 <th>Jumlah</th>
-<th>Aksi</th>
+
 </tr>
+
 </thead>
 
 <tbody id="tbodyKas"></tbody>
@@ -293,33 +304,7 @@ Tambah
 </table>
 
 </div>
-</div>
 
-<!-- LAPORAN -->
-<div id="laporan" class="section">
-
-<h3 class="mb-3">Laporan</h3>
-
-<div class="row g-3">
-
-<div class="col-md-4">
-<button class="btn btn-outline-primary w-100" onclick="laporanBulanan()">
-Laporan Bulanan
-</button>
-</div>
-
-<div class="col-md-4">
-<button class="btn btn-outline-success w-100" onclick="laporanTahunan()">
-Laporan Tahunan
-</button>
-</div>
-
-</div>
-
-<div class="card card-box mt-4 p-4">
-
-<div id="hasilLaporan">
-Belum ada laporan.
 </div>
 
 </div>
@@ -327,147 +312,79 @@ Belum ada laporan.
 </div>
 
 </div>
-</div>
-</div>
 
-<!-- MODAL ANGGOTA -->
-<div class="modal fade" id="modalAnggota">
-<div class="modal-dialog">
-<div class="modal-content">
-
-<div class="modal-header">
-<h5>Tambah Anggota</h5>
-</div>
-
-<div class="modal-body">
-
-<input type="text" id="aNama" class="form-control mb-2" placeholder="Nama">
-
-<input type="text" id="aHp" class="form-control mb-2" placeholder="No HP">
-
-<textarea id="aAlamat" class="form-control" placeholder="Alamat"></textarea>
-
-</div>
-
-<div class="modal-footer">
-<button class="btn btn-primary" onclick="tambahAnggota()">
-Simpan
-</button>
-</div>
-
-</div>
-</div>
-</div>
-
-<!-- MODAL PINJAMAN -->
-<div class="modal fade" id="modalPinjaman">
-<div class="modal-dialog">
-<div class="modal-content">
-
-<div class="modal-header">
-<h5>Tambah Pinjaman</h5>
-</div>
-
-<div class="modal-body">
-
-<input type="text" id="pNama" class="form-control mb-2" placeholder="Nama">
-
-<input type="number" id="pJumlah" class="form-control mb-2" placeholder="Jumlah">
-
-<input type="date" id="pTanggal" class="form-control">
-
-</div>
-
-<div class="modal-footer">
-<button class="btn btn-success" onclick="tambahPinjaman()">
-Simpan
-</button>
-</div>
-
-</div>
-</div>
-</div>
-
-<!-- MODAL PEMBAYARAN -->
-<div class="modal fade" id="modalPembayaran">
-<div class="modal-dialog">
-<div class="modal-content">
-
-<div class="modal-header">
-<h5>Pembayaran</h5>
-</div>
-
-<div class="modal-body">
-
-<input type="text" id="bNama" class="form-control mb-2" placeholder="Nama">
-
-<input type="number" id="bJumlah" class="form-control mb-2" placeholder="Jumlah">
-
-<input type="date" id="bTanggal" class="form-control mb-2">
-
-<select id="bStatus" class="form-select">
-<option>Cicilan</option>
-<option>Lunas</option>
-</select>
-
-</div>
-
-<div class="modal-footer">
-<button class="btn btn-warning" onclick="tambahPembayaran()">
-Simpan
-</button>
-</div>
-
-</div>
-</div>
-</div>
-
-<!-- MODAL KAS -->
-<div class="modal fade" id="modalKas">
-<div class="modal-dialog">
-<div class="modal-content">
-
-<div class="modal-header">
-<h5>Kas</h5>
-</div>
-
-<div class="modal-body">
-
-<input type="date" id="kTanggal" class="form-control mb-2">
-
-<select id="kJenis" class="form-select mb-2">
-<option>Pemasukan</option>
-<option>Pengeluaran</option>
-</select>
-
-<input type="text" id="kKet" class="form-control mb-2" placeholder="Keterangan">
-
-<input type="number" id="kJumlah" class="form-control" placeholder="Jumlah">
-
-</div>
-
-<div class="modal-footer">
-<button class="btn btn-secondary" onclick="tambahKas()">
-Simpan
-</button>
-</div>
-
-</div>
-</div>
 </div>
 
 <script>
 
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwRORj5CoImxAQ9Zmpc7Zl7QUteLYRk2nLTCSMg80RCEHFErgIVtatiKaf-AAdqc2Y/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzglGyG5YFfP6UlBWYNGmNzr7HB6O0vDWtPqlb248OUv7wngly8091YwjxTgCpg1HwF/exec";
 
 let anggota = [];
 let pinjaman = [];
 let pembayaran = [];
 let kas = [];
 
-function rupiah(x){
-return "Rp" + Number(x).toLocaleString("id-ID");
+
+// =======================
+// LOGIN
+// =======================
+
+function login(){
+
+let pass = password.value;
+
+if(pass=="12345"){
+
+localStorage.setItem("login","ya");
+
+loginPage.style.display="none";
+
+appPage.style.display="block";
+
+loadData();
+
+}else{
+
+alert("Password salah");
+
 }
+
+}
+
+function logout(){
+
+localStorage.removeItem("login");
+
+location.reload();
+
+}
+
+if(localStorage.getItem("login")=="ya"){
+
+loginPage.style.display="none";
+
+appPage.style.display="block";
+
+loadData();
+
+}
+
+
+// =======================
+// FORMAT RUPIAH
+// =======================
+
+function rupiah(x){
+
+return "Rp" +
+Number(x).toLocaleString("id-ID");
+
+}
+
+
+// =======================
+// SHOW SECTION
+// =======================
 
 function showSection(id){
 
@@ -476,158 +393,95 @@ document.querySelectorAll('.section')
 
 document.getElementById(id)
 .classList.add('active');
-}
-
-function updateDashboard(){
-
-document.getElementById('dAnggota')
-.innerText = anggota.length;
-
-let totalPinjam = pinjaman.reduce((a,b)=>a+b.jumlah,0);
-
-document.getElementById('dPinjaman')
-.innerText = rupiah(totalPinjam);
-
-let masuk = kas
-.filter(x=>x.jenis=="Pemasukan")
-.reduce((a,b)=>a+b.jumlah,0);
-
-let keluar = kas
-.filter(x=>x.jenis=="Pengeluaran")
-.reduce((a,b)=>a+b.jumlah,0);
-
-document.getElementById('dKas')
-.innerText = rupiah(masuk-keluar);
-
-let totalBayar = pembayaran
-.reduce((a,b)=>a+b.jumlah,0);
-
-document.getElementById('dTunggakan')
-.innerText = rupiah(totalPinjam-totalBayar);
-}
-
-async function kirimData(jenis,data){
-
-await fetch(WEBAPP_URL,{
-method:"POST",
-body:JSON.stringify({
-jenis:jenis,
-data:data
-})
-});
-}
-
-function tambahAnggota(){
-
-let data = {
-id:Date.now(),
-nama:aNama.value,
-hp:aHp.value,
-alamat:aAlamat.value
-};
-
-anggota.push(data);
-
-renderAnggota();
-
-kirimData("anggota",data);
-
-updateDashboard();
 
 }
 
-function renderAnggota(){
 
-let html = "";
+// =======================
+// LOAD DATA REALTIME
+// =======================
 
-anggota.forEach((x,i)=>{
+async function loadData(){
 
-html += `
-<tr>
+const res = await fetch(API_URL);
 
-<td>${x.nama}</td>
-<td>${x.hp}</td>
-<td>${x.alamat}</td>
+const data = await res.json();
 
-<td>
+anggota = data.anggota;
 
-<button class="btn btn-warning btn-sm"
-onclick="editAnggota(${i})">
+pinjaman = data.pinjaman;
 
-<i class="bi bi-pencil"></i>
+pembayaran = data.pembayaran;
 
-</button>
-
-<button class="btn btn-danger btn-sm"
-onclick="hapusAnggota(${i})">
-
-<i class="bi bi-trash"></i>
-
-</button>
-
-</td>
-
-</tr>
-`;
-});
-
-tbodyAnggota.innerHTML = html;
-}
-
-function editAnggota(i){
-
-let x = anggota[i];
-
-x.nama = prompt("Nama",x.nama);
-x.hp = prompt("HP",x.hp);
-x.alamat = prompt("Alamat",x.alamat);
-
-renderAnggota();
-}
-
-function hapusAnggota(i){
-
-if(confirm("Hapus data?")){
-
-anggota.splice(i,1);
-
-renderAnggota();
-
-updateDashboard();
-
-}
-}
-
-function tambahPinjaman(){
-
-let data = {
-id:Date.now(),
-nama:pNama.value,
-jumlah:Number(pJumlah.value),
-tanggal:pTanggal.value
-};
-
-pinjaman.push(data);
+kas = data.kas;
 
 renderPinjaman();
 
-kirimData("pinjaman",data);
+renderKas();
 
 updateDashboard();
 
 }
+
+
+// =======================
+// DASHBOARD
+// =======================
+
+function updateDashboard(){
+
+dAnggota.innerText = anggota.length;
+
+let totalPinjaman = pinjaman
+.reduce((a,b)=>a+Number(b[3]),0);
+
+dPinjaman.innerText =
+rupiah(totalPinjaman);
+
+let masuk = kas
+.filter(x=>x[3]=="Pemasukan")
+.reduce((a,b)=>a+Number(b[5]),0);
+
+let keluar = kas
+.filter(x=>x[3]=="Pengeluaran")
+.reduce((a,b)=>a+Number(b[5]),0);
+
+dKas.innerText =
+rupiah(masuk-keluar);
+
+let totalBayar = pembayaran
+.reduce((a,b)=>a+Number(b[3]),0);
+
+dTunggakan.innerText =
+rupiah(totalPinjaman-totalBayar);
+
+}
+
+
+// =======================
+// RENDER PINJAMAN
+// =======================
 
 function renderPinjaman(){
 
 let html = "";
 
-pinjaman.forEach((x,i)=>{
+let cari = search.value.toLowerCase();
+
+pinjaman.forEach(x=>{
+
+let nama = x[2];
+
+if(!nama.toLowerCase().includes(cari))
+return;
+
+let totalPinjaman = Number(x[3]);
 
 let bayar = pembayaran
-.filter(b=>b.nama==x.nama)
-.reduce((a,b)=>a+b.jumlah,0);
+.filter(p=>p[2]==nama)
+.reduce((a,b)=>a+Number(b[3]),0);
 
-let sisa = x.jumlah-bayar;
+let sisa = totalPinjaman-bayar;
 
 let status = sisa<=0
 ? `<span class="badge bg-success">Lunas</span>`
@@ -636,26 +490,26 @@ let status = sisa<=0
 html += `
 <tr>
 
-<td>${x.nama}</td>
-<td>${x.tanggal}</td>
-<td>${rupiah(x.jumlah)}</td>
+<td>${nama}</td>
+<td>${x[4]}</td>
+<td>${rupiah(totalPinjaman)}</td>
 <td>${rupiah(bayar)}</td>
 <td>${rupiah(sisa)}</td>
 <td>${status}</td>
 
 <td>
 
-<button class="btn btn-warning btn-sm"
-onclick="editPinjaman(${i})">
+<button class="btn btn-primary btn-sm"
+onclick="bayar('${nama}')">
 
-<i class="bi bi-pencil"></i>
+Bayar
 
 </button>
 
 <button class="btn btn-danger btn-sm"
-onclick="hapusPinjaman(${i})">
+onclick="hapusPinjaman('${x[0]}')">
 
-<i class="bi bi-trash"></i>
+Hapus
 
 </button>
 
@@ -663,262 +517,287 @@ onclick="hapusPinjaman(${i})">
 
 </tr>
 `;
+
 });
 
 tbodyPinjaman.innerHTML = html;
-}
-
-function editPinjaman(i){
-
-let x = pinjaman[i];
-
-x.nama = prompt("Nama",x.nama);
-x.jumlah = Number(prompt("Jumlah",x.jumlah));
-x.tanggal = prompt("Tanggal",x.tanggal);
-
-renderPinjaman();
-
-updateDashboard();
-}
-
-function hapusPinjaman(i){
-
-if(confirm("Hapus data?")){
-
-pinjaman.splice(i,1);
-
-renderPinjaman();
-
-updateDashboard();
-
-}
-}
-
-function tambahPembayaran(){
-
-let data = {
-id:Date.now(),
-nama:bNama.value,
-jumlah:Number(bJumlah.value),
-tanggal:bTanggal.value,
-status:bStatus.value
-};
-
-pembayaran.push(data);
-
-renderPembayaran();
-
-renderPinjaman();
-
-kirimData("pembayaran",data);
-
-updateDashboard();
 
 }
 
-function renderPembayaran(){
 
-let html = "";
+// =======================
+// TAMBAH PINJAMAN
+// =======================
 
-pembayaran.forEach((x,i)=>{
+async function modalPinjaman(){
 
-html += `
-<tr>
+let nama = prompt("Nama");
 
-<td>${x.nama}</td>
-<td>${x.tanggal}</td>
-<td>${rupiah(x.jumlah)}</td>
-<td>${x.status}</td>
+let jumlah = prompt("Jumlah");
 
-<td>
+let tanggal = new Date()
+.toISOString()
+.split('T')[0];
 
-<button class="btn btn-warning btn-sm"
-onclick="editPembayaran(${i})">
+let id = Date.now();
 
-<i class="bi bi-pencil"></i>
+let data = [
+id,
+new Date(),
+nama,
+jumlah,
+tanggal
+];
 
-</button>
+await fetch(API_URL,{
 
-<button class="btn btn-danger btn-sm"
-onclick="hapusPembayaran(${i})">
+method:"POST",
 
-<i class="bi bi-trash"></i>
+body:JSON.stringify({
 
-</button>
+aksi:"tambah",
+jenis:"pinjaman",
+data:data
 
-</td>
+})
 
-</tr>
-`;
 });
 
-tbodyPembayaran.innerHTML = html;
-}
 
-function editPembayaran(i){
+// =======================
+// KAS BERKURANG
+// =======================
 
-let x = pembayaran[i];
+await fetch(API_URL,{
 
-x.nama = prompt("Nama",x.nama);
-x.jumlah = Number(prompt("Jumlah",x.jumlah));
+method:"POST",
 
-renderPembayaran();
+body:JSON.stringify({
 
-renderPinjaman();
+aksi:"tambah",
+jenis:"kas",
 
-updateDashboard();
-}
+data:[
+Date.now()+1,
+new Date(),
+tanggal,
+"Pengeluaran",
+"Pinjaman ke "+nama,
+jumlah
+]
 
-function hapusPembayaran(i){
+})
 
-if(confirm("Hapus pembayaran?")){
+});
 
-pembayaran.splice(i,1);
-
-renderPembayaran();
-
-renderPinjaman();
-
-updateDashboard();
-
-}
-}
-
-function tambahKas(){
-
-let data = {
-id:Date.now(),
-tanggal:kTanggal.value,
-jenis:kJenis.value,
-ket:kKet.value,
-jumlah:Number(kJumlah.value)
-};
-
-kas.push(data);
-
-renderKas();
-
-kirimData("kas",data);
-
-updateDashboard();
+loadData();
 
 }
+
+
+// =======================
+// BAYAR
+// =======================
+
+async function bayar(nama){
+
+let jumlah = prompt("Jumlah bayar");
+
+if(!jumlah) return;
+
+let tanggal = new Date()
+.toISOString()
+.split('T')[0];
+
+await fetch(API_URL,{
+
+method:"POST",
+
+body:JSON.stringify({
+
+aksi:"tambah",
+jenis:"pembayaran",
+
+data:[
+Date.now(),
+new Date(),
+nama,
+jumlah,
+tanggal,
+"Cicilan"
+]
+
+})
+
+});
+
+
+// =======================
+// KAS MASUK
+// =======================
+
+await fetch(API_URL,{
+
+method:"POST",
+
+body:JSON.stringify({
+
+aksi:"tambah",
+jenis:"kas",
+
+data:[
+Date.now()+1,
+new Date(),
+tanggal,
+"Pemasukan",
+"Pembayaran dari "+nama,
+jumlah
+]
+
+})
+
+});
+
+loadData();
+
+}
+
+
+// =======================
+// HAPUS PINJAMAN
+// =======================
+
+async function hapusPinjaman(id){
+
+if(!confirm("Hapus data?"))
+return;
+
+await fetch(API_URL,{
+
+method:"POST",
+
+body:JSON.stringify({
+
+aksi:"hapus",
+jenis:"pinjaman",
+data:{id:id}
+
+})
+
+});
+
+loadData();
+
+}
+
+
+// =======================
+// RENDER KAS
+// =======================
 
 function renderKas(){
 
 let html = "";
 
-kas.forEach((x,i)=>{
+kas.forEach(x=>{
 
 html += `
 <tr>
 
-<td>${x.tanggal}</td>
-<td>${x.jenis}</td>
-<td>${x.ket}</td>
-<td>${rupiah(x.jumlah)}</td>
-
-<td>
-
-<button class="btn btn-warning btn-sm"
-onclick="editKas(${i})">
-
-<i class="bi bi-pencil"></i>
-
-</button>
-
-<button class="btn btn-danger btn-sm"
-onclick="hapusKas(${i})">
-
-<i class="bi bi-trash"></i>
-
-</button>
-
-</td>
+<td>${x[2]}</td>
+<td>${x[3]}</td>
+<td>${x[4]}</td>
+<td>${rupiah(x[5])}</td>
 
 </tr>
 `;
+
 });
 
 tbodyKas.innerHTML = html;
-}
-
-function editKas(i){
-
-let x = kas[i];
-
-x.ket = prompt("Keterangan",x.ket);
-x.jumlah = Number(prompt("Jumlah",x.jumlah));
-
-renderKas();
-
-updateDashboard();
-}
-
-function hapusKas(i){
-
-if(confirm("Hapus kas?")){
-
-kas.splice(i,1);
-
-renderKas();
-
-updateDashboard();
 
 }
-}
 
-function cariPinjaman(keyword){
 
-keyword = keyword.toLowerCase();
+// =======================
+// EXPORT PDF
+// =======================
 
-let rows = tbodyPinjaman.querySelectorAll("tr");
+function exportPDF(){
 
-rows.forEach(r=>{
+const { jsPDF } = window.jspdf;
 
-r.style.display =
-r.innerText.toLowerCase().includes(keyword)
-? ""
-: "none";
+const doc = new jsPDF();
+
+let rows = [];
+
+pinjaman.forEach(x=>{
+
+rows.push([
+x[2],
+x[4],
+rupiah(x[3])
+]);
 
 });
+
+doc.text("Laporan Pinjaman",14,15);
+
+doc.autoTable({
+
+head:[[
+"Nama",
+"Tanggal",
+"Jumlah"
+]],
+
+body:rows
+
+});
+
+doc.save("laporan.pdf");
+
 }
 
-function laporanBulanan(){
 
-hasilLaporan.innerHTML = `
-<h4>Laporan Bulanan</h4>
+// =======================
+// EXPORT EXCEL
+// =======================
 
-<p>Total Pinjaman:
-<b>${rupiah(
-pinjaman.reduce((a,b)=>a+b.jumlah,0)
-)}</b></p>
+function exportExcel(){
 
-<p>Total Pembayaran:
-<b>${rupiah(
-pembayaran.reduce((a,b)=>a+b.jumlah,0)
-)}</b></p>
-`;
-}
+let data = [];
 
-function laporanTahunan(){
+pinjaman.forEach(x=>{
 
-hasilLaporan.innerHTML = `
-<h4>Laporan Tahunan</h4>
+data.push({
 
-<p>Total Anggota:
-<b>${anggota.length}</b></p>
+Nama:x[2],
+Tanggal:x[4],
+Jumlah:x[3]
 
-<p>Total Kas:
-<b>${rupiah(
-kas.reduce((a,b)=>a+b.jumlah,0)
-)}</b></p>
-`;
+});
+
+});
+
+const wb = XLSX.utils.book_new();
+
+const ws = XLSX.utils.json_to_sheet(data);
+
+XLSX.utils.book_append_sheet(
+wb,
+ws,
+"Pinjaman"
+);
+
+XLSX.writeFile(
+wb,
+"laporan.xlsx"
+);
+
 }
 
 </script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
