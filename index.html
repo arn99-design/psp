@@ -26,7 +26,7 @@
         <div class="card login-box p-4">
             <h3 class="text-center mb-4">Login Bendahara</h3>
             <input type="password" id="password" class="form-control mb-3" placeholder="Password">
-            <button class="btn btn-primary" onclick="login()">Login</button>
+            <button class="btn btn-primary w-100" onclick="login()">Login</button>
         </div>
     </div>
 
@@ -83,7 +83,7 @@
                     <div id="kasAwal" class="section">
                         <h3 class="mb-3">Input Kas Awal</h3>
                         <div class="card card-box p-4">
-                            <input type="number" id="kasAwalJumlah" class="form-control mb-3" placeholder="Jumlah kas awal">
+                            <input type="number" id="kasAwalJumlah" class="form-control mb-3" placeholder="Jumlah kas awal (Rp)">
                             <button class="btn btn-primary" onclick="simpanKasAwal()">Simpan Kas Awal</button>
                         </div>
                     </div>
@@ -91,14 +91,20 @@
                     <div id="anggota" class="section">
                         <div class="d-flex justify-content-between mb-3">
                             <h3>Data Anggota</h3>
-                            <button class="btn btn-primary" onclick="tambahAnggota()">Tambah Anggota</button>
+                        </div>
+                        <div class="card card-box p-3 mb-3 bg-light border">
+                            <h6 class="mb-3">Tambah Anggota Baru</h6>
+                            <div class="row g-2">
+                                <div class="col-md-3"><input type="text" id="addNamaAnggota" class="form-control" placeholder="Nama Anggota"></div>
+                                <div class="col-md-3"><input type="text" id="addHpAnggota" class="form-control" placeholder="No HP"></div>
+                                <div class="col-md-4"><input type="text" id="addAlamatAnggota" class="form-control" placeholder="Alamat"></div>
+                                <div class="col-md-2"><button class="btn btn-primary w-100" onclick="simpanAnggotaBaru()">Simpan</button></div>
+                            </div>
                         </div>
                         <div class="card card-box p-3">
                             <table class="table table-bordered">
                                 <thead>
-                                    <tr>
-                                        <th>Nama</th><th>HP</th><th>Alamat</th><th>Aksi</th>
-                                    </tr>
+                                    <tr><th>Nama</th><th>HP</th><th>Alamat</th><th>Aksi</th></tr>
                                 </thead>
                                 <tbody id="tbodyAnggota"></tbody>
                             </table>
@@ -107,16 +113,33 @@
 
                     <div id="pinjaman" class="section">
                         <div class="d-flex justify-content-between mb-3">
-                            <h3>Pinjaman</h3>
+                            <h3>Data Pinjaman</h3>
                             <div>
-                                <button class="btn btn-success" onclick="tambahPinjaman()">Tambah Pinjaman</button>
-                                <button class="btn btn-danger" onclick="exportPDF()">PDF</button>
-                                <button class="btn btn-success" onclick="exportExcel()">Excel</button>
+                                <button class="btn btn-danger" onclick="exportPDF()">Export PDF</button>
+                                <button class="btn btn-success" onclick="exportExcel()">Export Excel</button>
                             </div>
                         </div>
+                        
+                        <div class="card card-box p-3 mb-4 border bg-light">
+                            <h6 class="mb-3">Input Pinjaman Baru</h6>
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <select id="pinjamNamaInput" class="form-select">
+                                        <option value="">-- Pilih Anggota --</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-5">
+                                    <input type="number" id="pinjamJumlahInput" class="form-control" placeholder="Nominal Pinjaman (Rp)">
+                                </div>
+                                <div class="col-md-3">
+                                    <button class="btn btn-primary w-100" onclick="simpanPinjamanBaru()">Buat Pinjaman</button>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="card card-box p-3">
-                            <input type="text" id="searchPinjam" class="form-control mb-3" placeholder="Cari nama..." onkeyup="renderPinjaman()">
-                            <table class="table table-bordered">
+                            <input type="text" id="searchPinjam" class="form-control mb-3" placeholder="Cari nama peminjam..." onkeyup="renderPinjaman()">
+                            <table class="table table-bordered align-middle">
                                 <thead>
                                     <tr>
                                         <th>Nama</th><th>Tanggal</th><th>Pinjaman</th><th>Bayar</th><th>Sisa</th><th>Status</th><th>Aksi</th>
@@ -129,26 +152,40 @@
 
                     <div id="pembayaran" class="section">
                         <h3 class="mb-3">Pembayaran & Jasa</h3>
-                        <div class="card card-box p-4">
+                        <div class="card card-box p-4 mb-4 border-top border-primary border-4">
                             <select id="bayarNama" class="form-select mb-3" onchange="infoHutang()">
-                                <option value="">Pilih Peminjam</option>
+                                <option value="">-- Pilih Peminjam --</option>
                             </select>
                             <div class="alert alert-info">
-                                <div>Total Pinjaman (Pokok): <b id="iPinjam">Rp0</b></div>
-                                <div>Sudah Bayar (Pokok): <b id="iBayar">Rp0</b></div>
-                                <div>Sisa Hutang (Pokok): <b id="iSisa">Rp0</b></div>
+                                <div class="row">
+                                    <div class="col-4">Total Pinjaman: <br><b id="iPinjam" class="fs-5">Rp0</b></div>
+                                    <div class="col-4">Sudah Bayar Pokok: <br><b id="iBayar" class="fs-5 text-success">Rp0</b></div>
+                                    <div class="col-4">Sisa Hutang: <br><b id="iSisa" class="fs-5 text-danger">Rp0</b></div>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <label class="form-label fw-bold">Nominal Pokok</label>
-                                    <input type="number" id="jumlahBayar" class="form-control mb-3" placeholder="Mengurangi sisa hutang">
+                                    <label class="form-label fw-bold">Nominal Pokok (Rp)</label>
+                                    <input type="number" id="jumlahBayar" class="form-control mb-3" placeholder="Max sesuai sisa hutang">
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-bold text-success">Nominal Jasa / Margin</label>
-                                    <input type="number" id="jumlahJasa" class="form-control mb-3" placeholder="Menambah saldo kas">
+                                    <label class="form-label fw-bold text-success">Nominal Jasa / Margin (Rp)</label>
+                                    <input type="number" id="jumlahJasa" class="form-control mb-3" placeholder="Bunga/Jasa (Masuk Saldo)">
                                 </div>
                             </div>
-                            <button class="btn btn-warning" onclick="simpanPembayaran()">Simpan Pembayaran</button>
+                            <button class="btn btn-warning fw-bold w-100" onclick="simpanPembayaran()">Simpan Pembayaran</button>
+                        </div>
+
+                        <h5 class="mb-3 mt-5">Riwayat Pembayaran Anggota</h5>
+                        <div class="card card-box p-3">
+                            <table class="table table-bordered align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Tanggal</th><th>Nama</th><th>Pokok (Mengurangi Hutang)</th><th>Jenis</th><th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyRiwayatPembayaran"></tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -159,7 +196,7 @@
                             <input type="date" id="tglPengeluaran" class="form-control mb-3">
                             
                             <label class="form-label">Keterangan Biaya</label>
-                            <input type="text" id="ketPengeluaran" class="form-control mb-3" placeholder="Contoh: Konsumsi rapat, fotokopi, alat tulis">
+                            <input type="text" id="ketPengeluaran" class="form-control mb-3" placeholder="Contoh: Konsumsi rapat, fotokopi">
                             
                             <label class="form-label">Total Pengeluaran (Rp)</label>
                             <input type="number" id="jumlahPengeluaran" class="form-control mb-3" placeholder="Nominal pengeluaran">
@@ -169,7 +206,7 @@
                     </div>
 
                     <div id="kas" class="section">
-                        <h3 class="mb-3">Kas Bendahara (Riwayat)</h3>
+                        <h3 class="mb-3">Buku Kas Bendahara (Riwayat Penuh)</h3>
                         <div class="card card-box p-3">
                             <table class="table table-bordered">
                                 <thead>
@@ -204,7 +241,7 @@
                 loginPage.style.display="none";
                 appPage.style.display="block";
                 loadData();
-            }else{
+            } else {
                 alert("Password salah");
             }
         }
@@ -220,22 +257,14 @@
             loadData();
         }
 
-        // ======================
-        // SHOW SECTION
-        // ======================
         function showSection(id){
             document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            
-            // Set tanggal hari ini otomatis di form pengeluaran
             if(id === 'pengeluaran'){
                 document.getElementById('tglPengeluaran').value = new Date().toISOString().split('T')[0];
             }
         }
 
-        // ======================
-        // FORMAT RUPIAH
-        // ======================
         function rupiah(x){
             return "Rp " + Number(x).toLocaleString("id-ID");
         }
@@ -253,9 +282,10 @@
                 kas = data.kas || [];
                 
                 renderAnggota();
+                populateDropdowns();
                 renderPinjaman();
+                renderPembayaranRiwayat();
                 renderKas();
-                updateDropdownBayar();
                 dashboard();
             } catch(e) {
                 console.error("Gagal memuat data", e);
@@ -267,55 +297,48 @@
         // ======================
         function dashboard(){
             dAnggota.innerText = anggota.length;
-            
             let totalKasMasuk = kas.filter(x=>x[3]=="Pemasukan").reduce((a,b)=>a+Number(b[5]),0);
             let totalKasKeluar = kas.filter(x=>x[3]=="Pengeluaran").reduce((a,b)=>a+Number(b[5]),0);
             dKas.innerText = rupiah(totalKasMasuk - totalKasKeluar);
-            
             let totalPinjaman = pinjaman.reduce((a,b)=>a+Number(b[3]),0);
             dPinjaman.innerText = rupiah(totalPinjaman);
-            
             let totalBayar = pembayaran.reduce((a,b)=>a+Number(b[3]),0);
             dTunggakan.innerText = rupiah(totalPinjaman - totalBayar);
         }
 
         // ======================
-        // SIMPAN KAS AWAL
+        // POPULATE DROPDOWNS
         // ======================
-        async function simpanKasAwal(){
-            let jumlah = kasAwalJumlah.value;
-            if(jumlah=="") return;
-            
-            await fetch(API_URL,{
-                method:"POST",
-                body:JSON.stringify({
-                    aksi:"tambah",
-                    jenis:"kas",
-                    data:[Date.now(), new Date(), new Date().toISOString().split('T')[0], "Pemasukan", "Kas Awal", jumlah]
-                })
-            });
-            alert("Kas awal berhasil");
-            kasAwalJumlah.value = "";
-            loadData();
+        function populateDropdowns(){
+            let htmlAnggota = `<option value="">-- Pilih Anggota --</option>`;
+            anggota.forEach(x => { htmlAnggota += `<option value="${x[2]}">${x[2]}</option>`; });
+            document.getElementById('pinjamNamaInput').innerHTML = htmlAnggota;
+
+            let htmlPinjam = `<option value="">-- Pilih Peminjam --</option>`;
+            pinjaman.forEach(x => { htmlPinjam += `<option value="${x[2]}">${x[2]}</option>`; });
+            document.getElementById('bayarNama').innerHTML = htmlPinjam;
         }
 
         // ======================
-        // TAMBAH ANGGOTA
+        // ANGGOTA (TANPA POP-UP)
         // ======================
-        async function tambahAnggota(){
-            let nama = prompt("Nama");
-            if(!nama) return;
-            let hp = prompt("HP");
-            let alamat = prompt("Alamat");
+        async function simpanAnggotaBaru(){
+            let nama = document.getElementById('addNamaAnggota').value;
+            let hp = document.getElementById('addHpAnggota').value;
+            let alamat = document.getElementById('addAlamatAnggota').value;
+            if(!nama) { alert("Nama anggota wajib diisi!"); return; }
             
             await fetch(API_URL,{
                 method:"POST",
                 body:JSON.stringify({
-                    aksi:"tambah",
-                    jenis:"anggota",
+                    aksi:"tambah", jenis:"anggota",
                     data:[Date.now(), new Date(), nama, hp, alamat]
                 })
             });
+            
+            document.getElementById('addNamaAnggota').value = "";
+            document.getElementById('addHpAnggota').value = "";
+            document.getElementById('addAlamatAnggota').value = "";
             loadData();
         }
 
@@ -324,55 +347,45 @@
             anggota.forEach(x=>{
                 html += `<tr>
                     <td>${x[2]}</td><td>${x[3]}</td><td>${x[4]}</td>
-                    <td><button class="btn btn-danger btn-sm" onclick="hapusAnggota('${x[0]}')">Hapus</button></td>
+                    <td><button class="btn btn-danger btn-sm" onclick="hapusAnggota('${x[0]}')"><i class="bi bi-trash"></i> Hapus</button></td>
                 </tr>`;
             });
-            tbodyAnggota.innerHTML = html;
+            document.getElementById('tbodyAnggota').innerHTML = html;
         }
 
         async function hapusAnggota(id){
-            if(!confirm("Hapus anggota?")) return;
+            if(!confirm("Hapus anggota ini?")) return;
             await fetch(API_URL,{ method:"POST", body:JSON.stringify({ aksi:"hapus", jenis:"anggota", data:{id:id} }) });
             loadData();
         }
 
         // ======================
-        // TAMBAH PINJAMAN
+        // PINJAMAN (TANPA POP-UP & ADA EDIT)
         // ======================
-        async function tambahPinjaman(){
-            let nama = prompt("Nama anggota");
-            let jumlah = prompt("Jumlah pinjaman");
-            if(!nama || !jumlah) return;
-            
+        async function simpanPinjamanBaru(){
+            let nama = document.getElementById('pinjamNamaInput').value;
+            let jumlah = document.getElementById('pinjamJumlahInput').value;
+            if(!nama || !jumlah || jumlah <= 0) {
+                alert("Silakan pilih nama dan isi jumlah pinjaman dengan benar!"); return;
+            }
             let tanggal = new Date().toISOString().split('T')[0];
             
-            // Simpan Pinjaman
             await fetch(API_URL,{
-                method:"POST",
-                body:JSON.stringify({
-                    aksi:"tambah",
-                    jenis:"pinjaman",
-                    data:[Date.now(), new Date(), nama, jumlah, tanggal]
-                })
+                method:"POST", body:JSON.stringify({ aksi:"tambah", jenis:"pinjaman", data:[Date.now(), new Date(), nama, jumlah, tanggal] })
+            });
+            await fetch(API_URL,{
+                method:"POST", body:JSON.stringify({ aksi:"tambah", jenis:"kas", data:[Date.now()+1, new Date(), tanggal, "Pengeluaran", "Pinjaman ke "+nama, jumlah] })
             });
             
-            // Kas Berkurang
-            await fetch(API_URL,{
-                method:"POST",
-                body:JSON.stringify({
-                    aksi:"tambah",
-                    jenis:"kas",
-                    data:[Date.now()+1, new Date(), tanggal, "Pengeluaran", "Pinjaman ke "+nama, jumlah]
-                })
-            });
-            alert("Pinjaman berhasil");
+            alert("Pinjaman berhasil ditambahkan!");
+            document.getElementById('pinjamNamaInput').value = "";
+            document.getElementById('pinjamJumlahInput').value = "";
             loadData();
         }
 
         function renderPinjaman(){
-            let cari = searchPinjam.value.toLowerCase();
+            let cari = document.getElementById('searchPinjam').value.toLowerCase();
             let html = "";
-            
             pinjaman.forEach(x=>{
                 let nama = x[2];
                 if(!nama.toLowerCase().includes(cari)) return;
@@ -380,186 +393,177 @@
                 let totalPinjam = Number(x[3]);
                 let totalBayar = pembayaran.filter(p=>p[2]==nama).reduce((a,b)=>a+Number(b[3]),0);
                 let sisa = totalPinjam - totalBayar;
-                let status = sisa<=0 ? `<span class="badge bg-success">Lunas</span>` : `<span class="badge bg-danger">Belum</span>`;
+                let status = sisa<=0 ? `<span class="badge bg-success">Lunas</span>` : `<span class="badge bg-danger">Belum Lunas</span>`;
                 
                 html += `<tr>
                     <td>${nama}</td><td>${x[4]}</td><td>${rupiah(totalPinjam)}</td>
-                    <td>${rupiah(totalBayar)}</td><td>${rupiah(sisa)}</td><td>${status}</td>
-                    <td><button class="btn btn-danger btn-sm" onclick="hapusPinjaman('${x[0]}')">Hapus</button></td>
+                    <td>${rupiah(totalBayar)}</td><td class="fw-bold">${rupiah(sisa)}</td><td>${status}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm me-1" onclick="editPinjaman('${x[0]}', '${nama}', '${totalPinjam}')"><i class="bi bi-pencil"></i> Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="hapusPinjaman('${x[0]}')"><i class="bi bi-trash"></i></button>
+                    </td>
                 </tr>`;
             });
-            tbodyPinjaman.innerHTML = html;
+            document.getElementById('tbodyPinjaman').innerHTML = html;
+        }
+
+        async function editPinjaman(id, nama, jumlahLama) {
+            let jumlahBaru = prompt(`Edit Nominal Pinjaman untuk ${nama}:`, jumlahLama);
+            if(jumlahBaru === null || jumlahBaru === jumlahLama || jumlahBaru <= 0) return;
+            
+            // Mengirim request edit (Pastikan backend Anda mendukung aksi:"edit")
+            await fetch(API_URL,{ method:"POST", body:JSON.stringify({ aksi:"edit", jenis:"pinjaman", data:{id:id, jumlah:jumlahBaru} }) });
+            alert("Data pinjaman diperbarui!");
+            loadData();
         }
 
         async function hapusPinjaman(id){
-            if(!confirm("Hapus pinjaman?")) return;
+            if(!confirm("Yakin ingin menghapus pinjaman ini?")) return;
             await fetch(API_URL,{ method:"POST", body:JSON.stringify({ aksi:"hapus", jenis:"pinjaman", data:{id:id} }) });
             loadData();
         }
 
         // ======================
-        // DROPDOWN PEMBAYARAN
+        // PEMBAYARAN & JASA (CEGAH MINUS)
         // ======================
-        function updateDropdownBayar(){
-            let html = `<option value="">Pilih Peminjam</option>`;
-            pinjaman.forEach(x=>{
-                html += `<option value="${x[2]}">${x[2]}</option>`;
-            });
-            bayarNama.innerHTML = html;
-        }
-
         function infoHutang(){
-            let nama = bayarNama.value;
+            let nama = document.getElementById('bayarNama').value;
             let dataPinjam = pinjaman.find(x=>x[2]==nama);
             if(!dataPinjam) {
-                iPinjam.innerText = "Rp0"; iBayar.innerText = "Rp0"; iSisa.innerText = "Rp0"; return;
+                document.getElementById('iPinjam').innerText = "Rp0"; 
+                document.getElementById('iBayar').innerText = "Rp0"; 
+                document.getElementById('iSisa').innerText = "Rp0"; 
+                return;
             }
-            
             let totalPinjam = Number(dataPinjam[3]);
             let totalBayar = pembayaran.filter(x=>x[2]==nama).reduce((a,b)=>a+Number(b[3]),0);
             let sisa = totalPinjam - totalBayar;
             
-            iPinjam.innerText = rupiah(totalPinjam);
-            iBayar.innerText = rupiah(totalBayar);
-            iSisa.innerText = rupiah(sisa);
+            document.getElementById('iPinjam').innerText = rupiah(totalPinjam);
+            document.getElementById('iBayar').innerText = rupiah(totalBayar);
+            document.getElementById('iSisa').innerText = rupiah(sisa);
+            
+            // Simpan variabel sisa ke atribut agar bisa divalidasi
+            document.getElementById('jumlahBayar').setAttribute('data-sisa', sisa);
         }
 
-        // ======================
-        // SIMPAN PEMBAYARAN & JASA
-        // ======================
         async function simpanPembayaran(){
-            let nama = bayarNama.value;
-            let pokok = Number(jumlahBayar.value) || 0;
-            let jasa = Number(jumlahJasa.value) || 0;
+            let nama = document.getElementById('bayarNama').value;
+            let pokok = Number(document.getElementById('jumlahBayar').value) || 0;
+            let jasa = Number(document.getElementById('jumlahJasa').value) || 0;
+            let sisaHutang = Number(document.getElementById('jumlahBayar').getAttribute('data-sisa')) || 0;
             
-            if(!nama || (pokok === 0 && jasa === 0)) {
-                alert("Pilih nama dan isi minimal salah satu nominal (Pokok atau Jasa)!");
+            if(!nama) { alert("Pilih peminjam terlebih dahulu!"); return; }
+            if(pokok === 0 && jasa === 0) { alert("Isi minimal salah satu nominal!"); return; }
+            
+            // LOGIKA PENCEGAHAN MINUS
+            if(pokok > sisaHutang) {
+                alert(`GAGAL: Nominal Pokok (Rp ${pokok}) melebihi Sisa Hutang (Rp ${sisaHutang}).\n\nJika anggota membayar lebih dari sisa hutangnya, pisahkan kelebihan tersebut dan masukkan ke dalam kolom JASA.`);
                 return;
             }
             
             let tanggal = new Date().toISOString().split('T')[0];
             
-            // 1. Simpan Pokok (jika ada)
             if(pokok > 0) {
-                await fetch(API_URL,{
-                    method:"POST",
-                    body:JSON.stringify({
-                        aksi:"tambah",
-                        jenis:"pembayaran",
-                        data:[Date.now(), new Date(), nama, pokok, tanggal, "Cicilan Pokok"]
-                    })
-                });
-                
-                await fetch(API_URL,{
-                    method:"POST",
-                    body:JSON.stringify({
-                        aksi:"tambah",
-                        jenis:"kas",
-                        data:[Date.now()+1, new Date(), tanggal, "Pemasukan", "Pokok Pinjaman dari "+nama, pokok]
-                    })
-                });
+                await fetch(API_URL,{ method:"POST", body:JSON.stringify({ aksi:"tambah", jenis:"pembayaran", data:[Date.now(), new Date(), nama, pokok, tanggal, "Cicilan Pokok"] }) });
+                await fetch(API_URL,{ method:"POST", body:JSON.stringify({ aksi:"tambah", jenis:"kas", data:[Date.now()+1, new Date(), tanggal, "Pemasukan", "Pokok Pinjaman dari "+nama, pokok] }) });
             }
-
-            // 2. Simpan Jasa (jika ada)
             if(jasa > 0) {
-                await fetch(API_URL,{
-                    method:"POST",
-                    body:JSON.stringify({
-                        aksi:"tambah",
-                        jenis:"kas",
-                        data:[Date.now()+2, new Date(), tanggal, "Pemasukan", "Jasa/Margin dari "+nama, jasa]
-                    })
-                });
+                await fetch(API_URL,{ method:"POST", body:JSON.stringify({ aksi:"tambah", jenis:"kas", data:[Date.now()+2, new Date(), tanggal, "Pemasukan", "Jasa/Margin dari "+nama, jasa] }) });
             }
             
             alert("Pembayaran berhasil dicatat!");
-            jumlahBayar.value = "";
-            jumlahJasa.value = "";
-            bayarNama.value = "";
-            infoHutang(); // Reset info text
+            document.getElementById('jumlahBayar').value = ""; document.getElementById('jumlahJasa').value = "";
+            infoHutang(); loadData();
+        }
+
+        // ======================
+        // RIWAYAT PEMBAYARAN (BISA DIEDIT/HAPUS)
+        // ======================
+        function renderPembayaranRiwayat() {
+            let html = "";
+            let bayarTerbalik = [...pembayaran].reverse(); // Urutkan terbaru di atas
+            bayarTerbalik.forEach(x => {
+                html += `<tr>
+                    <td>${x[4]}</td><td>${x[2]}</td><td class="text-success fw-bold">${rupiah(x[3])}</td><td>${x[5]}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm me-1" onclick="editPembayaran('${x[0]}', '${x[2]}', '${x[3]}')"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="hapusPembayaran('${x[0]}')"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>`;
+            });
+            document.getElementById('tbodyRiwayatPembayaran').innerHTML = html;
+        }
+
+        async function editPembayaran(id, nama, jumlahLama) {
+            let jumlahBaru = prompt(`Edit Nominal Pokok Pembayaran dari ${nama}:`, jumlahLama);
+            if(jumlahBaru === null || jumlahBaru === jumlahLama || jumlahBaru < 0) return;
+            await fetch(API_URL,{ method:"POST", body:JSON.stringify({ aksi:"edit", jenis:"pembayaran", data:{id:id, jumlah:jumlahBaru} }) });
+            alert("Pembayaran diperbarui!");
+            loadData();
+        }
+
+        async function hapusPembayaran(id) {
+            if(!confirm("Yakin ingin menghapus riwayat pembayaran pokok ini? (Ingat untuk menyesuaikan Kas secara manual jika perlu)")) return;
+            await fetch(API_URL,{ method:"POST", body:JSON.stringify({ aksi:"hapus", jenis:"pembayaran", data:{id:id} }) });
             loadData();
         }
 
         // ======================
-        // SIMPAN PENGELUARAN LAIN
+        // LAIN-LAIN (PENGELUARAN & KAS)
         // ======================
         async function simpanPengeluaran(){
             let tgl = document.getElementById('tglPengeluaran').value;
             let ket = document.getElementById('ketPengeluaran').value;
             let jml = Number(document.getElementById('jumlahPengeluaran').value) || 0;
-            
-            if(!tgl || !ket || jml <= 0){
-                alert("Mohon lengkapi Tanggal, Keterangan, dan Jumlah Pengeluaran!");
-                return;
-            }
-
-            await fetch(API_URL,{
-                method:"POST",
-                body:JSON.stringify({
-                    aksi:"tambah",
-                    jenis:"kas",
-                    data:[Date.now(), new Date(), tgl, "Pengeluaran", ket, jml]
-                })
-            });
-
-            alert("Pengeluaran berhasil dicatat dan memotong saldo!");
-            document.getElementById('ketPengeluaran').value = "";
-            document.getElementById('jumlahPengeluaran').value = "";
+            if(!tgl || !ket || jml <= 0){ alert("Mohon lengkapi form pengeluaran!"); return; }
+            await fetch(API_URL,{ method:"POST", body:JSON.stringify({ aksi:"tambah", jenis:"kas", data:[Date.now(), new Date(), tgl, "Pengeluaran", ket, jml] }) });
+            alert("Pengeluaran dicatat!");
+            document.getElementById('ketPengeluaran').value = ""; document.getElementById('jumlahPengeluaran').value = "";
             loadData();
         }
 
-        // ======================
-        // RENDER KAS
-        // ======================
         function renderKas(){
             let html = "";
-            // Urutkan dari yang terbaru (opsional tapi disarankan)
             let sortedKas = [...kas].reverse();
-            
             sortedKas.forEach(x=>{
                 let badgeType = x[3] === 'Pemasukan' ? 'success' : 'danger';
                 html += `<tr>
-                    <td>${x[2]}</td>
-                    <td><span class="badge bg-${badgeType}">${x[3]}</span></td>
-                    <td>${x[4]}</td>
-                    <td class="text-end fw-bold">${rupiah(x[5])}</td>
+                    <td>${x[2]}</td><td><span class="badge bg-${badgeType}">${x[3]}</span></td>
+                    <td>${x[4]}</td><td class="text-end fw-bold">${rupiah(x[5])}</td>
                 </tr>`;
             });
-            tbodyKas.innerHTML = html;
+            document.getElementById('tbodyKas').innerHTML = html;
+        }
+
+        async function simpanKasAwal(){
+            let jumlah = document.getElementById('kasAwalJumlah').value;
+            if(!jumlah) return;
+            await fetch(API_URL,{ method:"POST", body:JSON.stringify({ aksi:"tambah", jenis:"kas", data:[Date.now(), new Date(), new Date().toISOString().split('T')[0], "Pemasukan", "Kas Awal", jumlah] }) });
+            alert("Kas awal berhasil");
+            document.getElementById('kasAwalJumlah').value = ""; loadData();
         }
 
         // ======================
-        // EXPORT PDF
+        // EXPORT
         // ======================
         function exportPDF(){
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             let rows = [];
-            pinjaman.forEach(x=>{
-                rows.push([x[2], x[4], rupiah(x[3])]);
-            });
+            pinjaman.forEach(x=>{ rows.push([x[2], x[4], rupiah(x[3])]); });
             doc.text("Laporan Pinjaman",14,15);
-            doc.autoTable({
-                head:[["Nama", "Tanggal", "Jumlah"]],
-                body:rows
-            });
-            doc.save("laporan.pdf");
+            doc.autoTable({ head:[["Nama", "Tanggal", "Jumlah"]], body:rows });
+            doc.save("Laporan_Pinjaman.pdf");
         }
 
-        // ======================
-        // EXPORT EXCEL
-        // ======================
         function exportExcel(){
             let data = [];
-            pinjaman.forEach(x=>{
-                data.push({
-                    Nama:x[2], Tanggal:x[4], Jumlah:x[3]
-                });
-            });
+            pinjaman.forEach(x=>{ data.push({ Nama:x[2], Tanggal:x[4], Jumlah:x[3] }); });
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.json_to_sheet(data);
             XLSX.utils.book_append_sheet(wb, ws, "Pinjaman");
-            XLSX.writeFile(wb, "laporan.xlsx");
+            XLSX.writeFile(wb, "Laporan_Pinjaman.xlsx");
         }
     </script>
 </body>
