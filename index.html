@@ -123,16 +123,22 @@
                         <div class="card card-box p-3 mb-4 border bg-light">
                             <h6 class="mb-3">Input Pinjaman Baru</h6>
                             <div class="row g-2">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
+                                    <label class="form-label small text-muted mb-0">Tanggal Pinjam</label>
+                                    <input type="date" id="pinjamTanggalInput" class="form-control">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small text-muted mb-0">Nama Anggota</label>
                                     <select id="pinjamNamaInput" class="form-select">
                                         <option value="">-- Pilih Anggota --</option>
                                     </select>
                                 </div>
-                                <div class="col-md-5">
-                                    <input type="number" id="pinjamJumlahInput" class="form-control" placeholder="Nominal Pinjaman (Rp)">
+                                <div class="col-md-4">
+                                    <label class="form-label small text-muted mb-0">Nominal (Rp)</label>
+                                    <input type="number" id="pinjamJumlahInput" class="form-control" placeholder="Nominal Pinjaman">
                                 </div>
-                                <div class="col-md-3">
-                                    <button class="btn btn-primary w-100" onclick="simpanPinjamanBaru()">Buat Pinjaman</button>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button class="btn btn-primary w-100" onclick="simpanPinjamanBaru()">Simpan</button>
                                 </div>
                             </div>
                         </div>
@@ -208,10 +214,10 @@
                     <div id="kas" class="section">
                         <h3 class="mb-3">Buku Kas Bendahara (Riwayat Penuh)</h3>
                         <div class="card card-box p-3">
-                            <table class="table table-bordered">
-                                <thead>
+                            <table class="table table-bordered align-middle">
+                                <thead class="table-light">
                                     <tr>
-                                        <th>Tanggal</th><th>Jenis</th><th>Keterangan</th><th>Jumlah</th>
+                                        <th>Tanggal</th><th>Jenis</th><th>Keterangan</th><th class="text-end">Jumlah</th><th class="text-end">Saldo Akhir</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbodyKas"></tbody>
@@ -260,13 +266,21 @@
         function showSection(id){
             document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));
             document.getElementById(id).classList.add('active');
+            
+            // Set default tanggal hari ini saat menu dibuka
+            let today = new Date().toISOString().split('T')[0];
             if(id === 'pengeluaran'){
-                document.getElementById('tglPengeluaran').value = new Date().toISOString().split('T')[0];
+                document.getElementById('tglPengeluaran').value = today;
+            } else if (id === 'pinjaman'){
+                document.getElementById('pinjamTanggalInput').value = today;
             }
         }
 
         function rupiah(x){
-            return "Rp " + Number(x).toLocaleString("id-ID");
+            // Tangani angka negatif agar tampil -Rp 100.000 bukan Rp -100.000
+            let isNegative = x < 0;
+            let formatted = Math.abs(Number(x)).toLocaleString("id-ID");
+            return isNegative ? "-Rp " + formatted : "Rp " + formatted;
         }
 
         // ======================
@@ -320,7 +334,7 @@
         }
 
         // ======================
-        // ANGGOTA (TANPA POP-UP)
+        // ANGGOTA
         // ======================
         async function simpanAnggotaBaru(){
             let nama = document.getElementById('addNamaAnggota').value;
@@ -360,15 +374,19 @@
         }
 
         // ======================
-        // PINJAMAN (TANPA POP-UP & ADA EDIT)
+        // PINJAMAN
         // ======================
         async function simpanPinjamanBaru(){
             let nama = document.getElementById('pinjamNamaInput').value;
             let jumlah = document.getElementById('pinjamJumlahInput').value;
+            let tanggal = document.getElementById('pinjamTanggalInput').value;
+            
             if(!nama || !jumlah || jumlah <= 0) {
                 alert("Silakan pilih nama dan isi jumlah pinjaman dengan benar!"); return;
             }
-            let tanggal = new Date().toISOString().split('T')[0];
+            if(!tanggal) {
+                tanggal = new Date().toISOString().split('T')[0];
+            }
             
             await fetch(API_URL,{
                 method:"POST", body:JSON.stringify({ aksi:"tambah", jenis:"pinjaman", data:[Date.now(), new Date(), nama, jumlah, tanggal] })
@@ -380,6 +398,8 @@
             alert("Pinjaman berhasil ditambahkan!");
             document.getElementById('pinjamNamaInput').value = "";
             document.getElementById('pinjamJumlahInput').value = "";
+            // Reset tanggal ke hari ini
+            document.getElementById('pinjamTanggalInput').value = new Date().toISOString().split('T')[0];
             loadData();
         }
 
@@ -411,7 +431,6 @@
             let jumlahBaru = prompt(`Edit Nominal Pinjaman untuk ${nama}:`, jumlahLama);
             if(jumlahBaru === null || jumlahBaru === jumlahLama || jumlahBaru <= 0) return;
             
-            // Mengirim request edit (Pastikan backend Anda mendukung aksi:"edit")
             await fetch(API_URL,{ method:"POST", body:JSON.stringify({ aksi:"edit", jenis:"pinjaman", data:{id:id, jumlah:jumlahBaru} }) });
             alert("Data pinjaman diperbarui!");
             loadData();
@@ -424,7 +443,7 @@
         }
 
         // ======================
-        // PEMBAYARAN & JASA (CEGAH MINUS)
+        // PEMBAYARAN & JASA
         // ======================
         function infoHutang(){
             let nama = document.getElementById('bayarNama').value;
@@ -443,7 +462,6 @@
             document.getElementById('iBayar').innerText = rupiah(totalBayar);
             document.getElementById('iSisa').innerText = rupiah(sisa);
             
-            // Simpan variabel sisa ke atribut agar bisa divalidasi
             document.getElementById('jumlahBayar').setAttribute('data-sisa', sisa);
         }
 
@@ -456,7 +474,6 @@
             if(!nama) { alert("Pilih peminjam terlebih dahulu!"); return; }
             if(pokok === 0 && jasa === 0) { alert("Isi minimal salah satu nominal!"); return; }
             
-            // LOGIKA PENCEGAHAN MINUS
             if(pokok > sisaHutang) {
                 alert(`GAGAL: Nominal Pokok (Rp ${pokok}) melebihi Sisa Hutang (Rp ${sisaHutang}).\n\nJika anggota membayar lebih dari sisa hutangnya, pisahkan kelebihan tersebut dan masukkan ke dalam kolom JASA.`);
                 return;
@@ -477,12 +494,9 @@
             infoHutang(); loadData();
         }
 
-        // ======================
-        // RIWAYAT PEMBAYARAN (BISA DIEDIT/HAPUS)
-        // ======================
         function renderPembayaranRiwayat() {
             let html = "";
-            let bayarTerbalik = [...pembayaran].reverse(); // Urutkan terbaru di atas
+            let bayarTerbalik = [...pembayaran].reverse();
             bayarTerbalik.forEach(x => {
                 html += `<tr>
                     <td>${x[4]}</td><td>${x[2]}</td><td class="text-success fw-bold">${rupiah(x[3])}</td><td>${x[5]}</td>
@@ -525,12 +539,37 @@
 
         function renderKas(){
             let html = "";
-            let sortedKas = [...kas].reverse();
-            sortedKas.forEach(x=>{
+            
+            // 1. Urutkan data kas dari terlama (berdasarkan ID/timestamp di index 0)
+            let sortedKasAsc = [...kas].sort((a, b) => Number(a[0]) - Number(b[0]));
+            
+            // 2. Hitung Saldo Berjalan (Running Balance)
+            let saldoBerjalan = 0;
+            let kasDenganSaldo = sortedKasAsc.map(x => {
+                let nominal = Number(x[5]);
+                if (x[3] === 'Pemasukan') {
+                    saldoBerjalan += nominal;
+                } else if (x[3] === 'Pengeluaran') {
+                    saldoBerjalan -= nominal;
+                }
+                return { data: x, saldoAkhir: saldoBerjalan };
+            });
+
+            // 3. Balik urutan agar yang terbaru muncul di atas tabel
+            let reversedKas = kasDenganSaldo.reverse();
+
+            // 4. Render ke HTML
+            reversedKas.forEach(item => {
+                let x = item.data;
                 let badgeType = x[3] === 'Pemasukan' ? 'success' : 'danger';
+                let sign = x[3] === 'Pemasukan' ? '+' : '-';
+                
                 html += `<tr>
-                    <td>${x[2]}</td><td><span class="badge bg-${badgeType}">${x[3]}</span></td>
-                    <td>${x[4]}</td><td class="text-end fw-bold">${rupiah(x[5])}</td>
+                    <td>${x[2]}</td>
+                    <td><span class="badge bg-${badgeType}">${x[3]}</span></td>
+                    <td>${x[4]}</td>
+                    <td class="text-end text-${badgeType}">${sign} ${rupiah(x[5])}</td>
+                    <td class="text-end fw-bold">${rupiah(item.saldoAkhir)}</td>
                 </tr>`;
             });
             document.getElementById('tbodyKas').innerHTML = html;
