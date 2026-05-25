@@ -239,49 +239,30 @@
         let pembayaran = [];
         let kas = [];
 
-        // ======================
-        // LOGIN
-        // ======================
-        function login(){
-            if(password.value=="12345"){
-                localStorage.setItem("login","ya");
-                loginPage.style.display="none";
-                appPage.style.display="block";
-                loadData();
-            } else {
-                alert("Password salah");
-            }
-        }
+       // --- SISTEM KEAMANAN SESI (SESSION) ---
+const activeUser = sessionStorage.getItem("activeUser");
+const activeRole = sessionStorage.getItem("userRole");
 
-        function logout(){
-            localStorage.removeItem("login");
-            location.reload();
-        }
+// Jika belum login, tendang kembali ke index.html
+if (!activeUser || !activeRole) {
+    window.location.href = "index.html";
+}
 
-        if(localStorage.getItem("login")=="ya"){
-            loginPage.style.display="none";
-            appPage.style.display="block";
-            loadData();
-        }
+// Set status admin secara otomatis dari database
+let isAdmin = (activeRole === 'admin');
 
-        function showSection(id){
-            document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            
-            let today = new Date().toISOString().split('T')[0];
-            if(id === 'pengeluaran'){
-                document.getElementById('tglPengeluaran').value = today;
-            } else if (id === 'pinjaman'){
-                document.getElementById('pinjamTanggalInput').value = today;
-            }
-        }
+// Fungsi Logout
+function logout() {
+    sessionStorage.clear();
+    window.location.href = "index.html";
+}
 
-        function rupiah(x){
-            let isNegative = x < 0;
-            let formatted = Math.abs(Number(x)).toLocaleString("id-ID");
-            return isNegative ? "-Rp " + formatted : "Rp " + formatted;
-        }
+// Tambahkan tombol Logout di Navbar (Anda perlu menambahkannya di HTML Navbar bagian atas)
+document.getElementById('logo-icon').parentElement.innerHTML += ` <button class="btn btn-sm btn-danger ms-3 d-print-none" onclick="logout()">Logout (${activeUser})</button>`;
 
+// --- SISA KODE SCRIPT_URL DAN LAINNYA ---
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxGFUEmC7i1XV0bMdBGRvTQo3wgXX11DxV0eTxXmUpUao7sHOZmfNEWatAQrCO__k6k/exec"; 
+// ...
         // ======================
         // LOAD DATA
         // ======================
@@ -304,6 +285,53 @@
                 console.error("Gagal memuat data", e);
             }
         }
+        function renderUIAccess() {
+    const formContainer = document.getElementById('form-container');
+    const dataContainer = document.getElementById('data-container');
+    const headerAksi = document.getElementById('header-aksi');
+
+    if (isAdmin) {
+        formContainer.style.display = 'block';
+        dataContainer.classList.replace('col-lg-12', 'col-lg-8');
+        headerAksi.style.display = 'table-cell';
+    } else {
+        // Mode User Biasa: Sembunyikan Form dan Kolom Edit/Hapus
+        formContainer.style.display = 'none';
+        dataContainer.classList.replace('col-lg-8', 'col-lg-12');
+        if(headerAksi) headerAksi.style.display = 'none';
+    }
+}
+
+function muatDataVisual() {
+    const filterBulan = document.getElementById('filter-bulan').value;
+    const urutkan = document.getElementById('urutkan-berdasarkan').value;
+    
+    // 1. Hitung Saldo Global DULU menggunakan seluruh dataTransaksi
+    hitungDashboard(dataTransaksi); 
+
+    let dataProses = [...dataTransaksi];
+
+    // 2. PEMBATASAN AKSES: Jika bukan admin, hanya tampilkan transaksi yang memuat username-nya di keterangan
+    if (!isAdmin) {
+        dataProses = dataProses.filter(item => 
+            String(item.keterangan).toLowerCase().includes(activeUser.toLowerCase())
+        );
+    }
+
+    // 3. Filter Bulan
+    if (filterBulan) {
+        dataProses = dataProses.filter(item => String(item.tanggal).startsWith(filterBulan));
+    }
+
+    // 4. Sorting
+    if (urutkan === 'tanggal-desc') dataProses.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+    else if (urutkan === 'tanggal-asc') dataProses.sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
+    
+    // Hanya render tabel & rekap jenis khusus untuk data yang boleh dia lihat
+    hitungJumlahPerJenis(dataProses);
+    renderTabel(dataProses);
+    updateDatalistJenis();
+}
 
         // ======================
         // DASHBOARD
