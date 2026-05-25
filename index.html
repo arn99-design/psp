@@ -128,10 +128,11 @@
                                     <input type="date" id="pinjamTanggalInput" class="form-control">
                                 </div>
                                 <div class="col-md-3">
-                                    <label class="form-label small text-muted mb-0">Nama Anggota</label>
-                                    <select id="pinjamNamaInput" class="form-select">
+                                    <label class="form-label small text-muted mb-0">Peminjam</label>
+                                    <select id="pinjamNamaInput" class="form-select" onchange="togglePeminjamManual()">
                                         <option value="">-- Pilih Anggota --</option>
                                     </select>
+                                    <input type="text" id="pinjamNamaManual" class="form-control mt-2" placeholder="Ketik nama luar..." style="display:none;">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label small text-muted mb-0">Nominal (Rp)</label>
@@ -182,7 +183,7 @@
                             <button class="btn btn-warning fw-bold w-100" onclick="simpanPembayaran()">Simpan Pembayaran</button>
                         </div>
 
-                        <h5 class="mb-3 mt-5">Riwayat Pembayaran Anggota</h5>
+                        <h5 class="mb-3 mt-5">Riwayat Pembayaran Peminjam</h5>
                         <div class="card card-box p-3">
                             <table class="table table-bordered align-middle">
                                 <thead class="table-light">
@@ -267,7 +268,6 @@
             document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             
-            // Set default tanggal hari ini saat menu dibuka
             let today = new Date().toISOString().split('T')[0];
             if(id === 'pengeluaran'){
                 document.getElementById('tglPengeluaran').value = today;
@@ -277,7 +277,6 @@
         }
 
         function rupiah(x){
-            // Tangani angka negatif agar tampil -Rp 100.000 bukan Rp -100.000
             let isNegative = x < 0;
             let formatted = Math.abs(Number(x)).toLocaleString("id-ID");
             return isNegative ? "-Rp " + formatted : "Rp " + formatted;
@@ -321,16 +320,31 @@
         }
 
         // ======================
-        // POPULATE DROPDOWNS
+        // POPULATE DROPDOWNS & NON-MEMBER LOGIC
         // ======================
         function populateDropdowns(){
             let htmlAnggota = `<option value="">-- Pilih Anggota --</option>`;
             anggota.forEach(x => { htmlAnggota += `<option value="${x[2]}">${x[2]}</option>`; });
+            // Tambahkan opsi manual untuk Non-Anggota
+            htmlAnggota += `<option value="manual" class="fw-bold text-primary">Lainnya (Bukan Anggota)...</option>`;
             document.getElementById('pinjamNamaInput').innerHTML = htmlAnggota;
 
+            // Pilihan pembayaran berasal dari daftar riwayat pinjaman
             let htmlPinjam = `<option value="">-- Pilih Peminjam --</option>`;
             pinjaman.forEach(x => { htmlPinjam += `<option value="${x[2]}">${x[2]}</option>`; });
             document.getElementById('bayarNama').innerHTML = htmlPinjam;
+        }
+
+        // Fungsi memunculkan input teks jika memilih "Lainnya"
+        function togglePeminjamManual() {
+            let selectValue = document.getElementById('pinjamNamaInput').value;
+            let manualInput = document.getElementById('pinjamNamaManual');
+            if(selectValue === 'manual') {
+                manualInput.style.display = 'block';
+            } else {
+                manualInput.style.display = 'none';
+                manualInput.value = '';
+            }
         }
 
         // ======================
@@ -377,29 +391,44 @@
         // PINJAMAN
         // ======================
         async function simpanPinjamanBaru(){
-            let nama = document.getElementById('pinjamNamaInput').value;
+            let namaSelect = document.getElementById('pinjamNamaInput').value;
             let jumlah = document.getElementById('pinjamJumlahInput').value;
             let tanggal = document.getElementById('pinjamTanggalInput').value;
+            let namaFinal = namaSelect;
             
-            if(!nama || !jumlah || jumlah <= 0) {
-                alert("Silakan pilih nama dan isi jumlah pinjaman dengan benar!"); return;
+            // Logika untuk Non-Anggota
+            if(namaSelect === 'manual'){
+                let manualInput = document.getElementById('pinjamNamaManual').value;
+                if(!manualInput) {
+                    alert("Nama peminjam dari luar wajib diketik!"); return;
+                }
+                // Otomatis menempelkan label Bukan Anggota
+                namaFinal = manualInput + " (Bukan Anggota)";
+            }
+
+            if(!namaFinal || !jumlah || jumlah <= 0) {
+                alert("Silakan pilih/isi nama dan nominal pinjaman dengan benar!"); return;
             }
             if(!tanggal) {
                 tanggal = new Date().toISOString().split('T')[0];
             }
             
             await fetch(API_URL,{
-                method:"POST", body:JSON.stringify({ aksi:"tambah", jenis:"pinjaman", data:[Date.now(), new Date(), nama, jumlah, tanggal] })
+                method:"POST", body:JSON.stringify({ aksi:"tambah", jenis:"pinjaman", data:[Date.now(), new Date(), namaFinal, jumlah, tanggal] })
             });
             await fetch(API_URL,{
-                method:"POST", body:JSON.stringify({ aksi:"tambah", jenis:"kas", data:[Date.now()+1, new Date(), tanggal, "Pengeluaran", "Pinjaman ke "+nama, jumlah] })
+                method:"POST", body:JSON.stringify({ aksi:"tambah", jenis:"kas", data:[Date.now()+1, new Date(), tanggal, "Pengeluaran", "Pinjaman ke "+namaFinal, jumlah] })
             });
             
             alert("Pinjaman berhasil ditambahkan!");
+            
+            // Reset form
             document.getElementById('pinjamNamaInput').value = "";
+            document.getElementById('pinjamNamaManual').value = "";
+            document.getElementById('pinjamNamaManual').style.display = "none";
             document.getElementById('pinjamJumlahInput').value = "";
-            // Reset tanggal ke hari ini
             document.getElementById('pinjamTanggalInput').value = new Date().toISOString().split('T')[0];
+            
             loadData();
         }
 
@@ -419,8 +448,8 @@
                     <td>${nama}</td><td>${x[4]}</td><td>${rupiah(totalPinjam)}</td>
                     <td>${rupiah(totalBayar)}</td><td class="fw-bold">${rupiah(sisa)}</td><td>${status}</td>
                     <td>
-                        <button class="btn btn-warning btn-sm me-1" onclick="editPinjaman('${x[0]}', '${nama}', '${totalPinjam}')"><i class="bi bi-pencil"></i> Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="hapusPinjaman('${x[0]}')"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-warning btn-sm me-1 mb-1" onclick="editPinjaman('${x[0]}', '${nama}', '${totalPinjam}')"><i class="bi bi-pencil"></i> Edit</button>
+                        <button class="btn btn-danger btn-sm mb-1" onclick="hapusPinjaman('${x[0]}')"><i class="bi bi-trash"></i></button>
                     </td>
                 </tr>`;
             });
@@ -501,8 +530,8 @@
                 html += `<tr>
                     <td>${x[4]}</td><td>${x[2]}</td><td class="text-success fw-bold">${rupiah(x[3])}</td><td>${x[5]}</td>
                     <td>
-                        <button class="btn btn-warning btn-sm me-1" onclick="editPembayaran('${x[0]}', '${x[2]}', '${x[3]}')"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-danger btn-sm" onclick="hapusPembayaran('${x[0]}')"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-warning btn-sm me-1 mb-1" onclick="editPembayaran('${x[0]}', '${x[2]}', '${x[3]}')"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-danger btn-sm mb-1" onclick="hapusPembayaran('${x[0]}')"><i class="bi bi-trash"></i></button>
                     </td>
                 </tr>`;
             });
@@ -539,12 +568,9 @@
 
         function renderKas(){
             let html = "";
-            
-            // 1. Urutkan data kas dari terlama (berdasarkan ID/timestamp di index 0)
             let sortedKasAsc = [...kas].sort((a, b) => Number(a[0]) - Number(b[0]));
-            
-            // 2. Hitung Saldo Berjalan (Running Balance)
             let saldoBerjalan = 0;
+            
             let kasDenganSaldo = sortedKasAsc.map(x => {
                 let nominal = Number(x[5]);
                 if (x[3] === 'Pemasukan') {
@@ -555,10 +581,8 @@
                 return { data: x, saldoAkhir: saldoBerjalan };
             });
 
-            // 3. Balik urutan agar yang terbaru muncul di atas tabel
             let reversedKas = kasDenganSaldo.reverse();
 
-            // 4. Render ke HTML
             reversedKas.forEach(item => {
                 let x = item.data;
                 let badgeType = x[3] === 'Pemasukan' ? 'success' : 'danger';
