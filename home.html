@@ -297,18 +297,71 @@ Tambah Anggota
 <div id="pinjaman"
 class="section">
 
-<div class="d-flex justify-content-between mb-3">
+<h3 class="mb-3">
+Data Pinjaman
+</h3>
 
-<h3>Pinjaman</h3>
+<div class="card card-box p-4 mb-4">
 
-<div>
+<div class="row">
 
-<button class="btn btn-success"
-onclick="tambahPinjaman()">
+<div class="col-md-3">
 
-Tambah Pinjaman
+<label>Nama Anggota</label>
+
+<select id="pinjamNama"
+class="form-select">
+
+</select>
+
+</div>
+
+<div class="col-md-3">
+
+<label>Jumlah Pinjaman</label>
+
+<input type="number"
+id="pinjamJumlah"
+class="form-control">
+
+</div>
+
+<div class="col-md-3">
+
+<label>Tanggal</label>
+
+<input type="date"
+id="pinjamTanggal"
+class="form-control">
+
+</div>
+
+<div class="col-md-3 d-flex align-items-end">
+
+<button class="btn btn-success w-100"
+onclick="simpanPinjaman()">
+
+Simpan Pinjaman
 
 </button>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="card card-box p-3">
+
+<div class="d-flex justify-content-between mb-3">
+
+<input type="text"
+id="searchPinjam"
+class="form-control w-50"
+placeholder="Cari nama..."
+onkeyup="renderPinjaman()">
+
+<div>
 
 <button class="btn btn-danger"
 onclick="exportPDF()">
@@ -327,14 +380,6 @@ Excel
 </div>
 
 </div>
-
-<div class="card card-box p-3">
-
-<input type="text"
-id="searchPinjam"
-class="form-control mb-3"
-placeholder="Cari nama..."
-onkeyup="renderPinjaman()">
 
 <table class="table table-bordered">
 
@@ -361,8 +406,25 @@ onkeyup="renderPinjaman()">
 </div>
 
 </div>
+  function updateDropdownPinjam(){
 
-<!-- PEMBAYARAN -->
+let html = "";
+
+anggota.forEach(x=>{
+
+html += `
+<option value="${x[2]}">
+${x[2]}
+</option>
+`;
+
+});
+
+pinjamNama.innerHTML = html;
+
+}
+  
+  <!-- PEMBAYARAN -->
 <div id="pembayaran"
 class="section">
 
@@ -565,6 +627,8 @@ renderKas();
 
 updateDropdownBayar();
 
+updateDropdownPinjam();
+
 dashboard();
 
 }
@@ -756,17 +820,24 @@ loadData();
 // TAMBAH PINJAMAN
 // ======================
 
-async function tambahPinjaman(){
+async function simpanPinjaman(){
 
-let nama = prompt("Nama anggota");
+let nama =
+pinjamNama.value;
 
-let jumlah = prompt("Jumlah pinjaman");
-
-if(!nama || !jumlah)
-return;
+let jumlah =
+pinjamJumlah.value;
 
 let tanggal =
-new Date().toISOString().split('T')[0];
+pinjamTanggal.value;
+
+if(!nama || !jumlah || !tanggal){
+
+alert("Lengkapi data");
+
+return;
+
+}
 
 
 // ======================
@@ -825,12 +896,12 @@ jumlah
 
 alert("Pinjaman berhasil");
 
+pinjamJumlah.value="";
+
 loadData();
 
 }
-
-
-// ======================
+  // ======================
 // RENDER PINJAMAN
 // ======================
 
@@ -876,6 +947,18 @@ html += `
 
 <td>
 
+<button class="btn btn-warning btn-sm"
+onclick="editPinjaman(
+'${x[0]}',
+'${x[2]}',
+'${x[3]}',
+'${x[4]}'
+)">
+
+Edit
+
+</button>
+
 <button class="btn btn-danger btn-sm"
 onclick="hapusPinjaman('${x[0]}')">
 
@@ -893,7 +976,54 @@ Hapus
 tbodyPinjaman.innerHTML = html;
 
 }
+async function editPinjaman(
+id,
+nama,
+jumlah,
+tanggal
+){
 
+let jumlahBaru =
+prompt(
+"Edit jumlah pinjaman",
+jumlah
+);
+
+if(!jumlahBaru) return;
+
+let tanggalBaru =
+prompt(
+"Edit tanggal",
+tanggal
+);
+
+await fetch(API_URL,{
+
+method:"POST",
+
+body:JSON.stringify({
+
+aksi:"edit",
+
+jenis:"pinjaman",
+
+data:[
+id,
+new Date(),
+nama,
+jumlahBaru,
+tanggalBaru
+]
+
+})
+
+});
+
+alert("Pinjaman berhasil diupdate");
+
+loadData();
+
+}
 
 // ======================
 // HAPUS PINJAMAN
