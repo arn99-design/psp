@@ -74,14 +74,14 @@
                     <h3 class="mb-3">Input Kas Awal</h3>
                     <div class="card card-box p-4">
                         <input type="number" id="kasAwalJumlah" class="form-control mb-3" placeholder="Jumlah kas awal">
-                        <button class="btn btn-primary" onclick="simpanKasAwal()">Simpan Kas Awal</button>
+                        <button id="btnKasAwal" class="btn btn-primary" onclick="simpanKasAwal()">Simpan Kas Awal</button>
                     </div>
                 </div>
 
                 <div id="anggota" class="section">
                     <div class="d-flex justify-content-between mb-3">
                         <h3>Data Anggota</h3>
-                        <button class="btn btn-primary" onclick="tambahAnggota()">Tambah Anggota</button>
+                        <button id="btnTambahAnggota" class="btn btn-primary" onclick="tambahAnggota()">Tambah Anggota</button>
                     </div>
                     <div class="card card-box p-3">
                         <table class="table table-bordered">
@@ -118,7 +118,7 @@
                                 <input type="date" id="pinjamTanggal" class="form-control">
                             </div>
                             <div class="col-md-3 d-flex align-items-end">
-                                <button class="btn btn-success w-100" onclick="simpanPinjaman()">Simpan Pinjaman</button>
+                                <button id="btnSimpanPinjaman" class="btn btn-success w-100" onclick="simpanPinjaman()">Simpan Pinjaman</button>
                             </div>
                         </div>
                     </div>
@@ -155,16 +155,20 @@
                             <div>Sisa Hutang: <b id="iSisa">Rp0</b></div>
                         </div>
                         <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label>Jumlah Pokok yang Dibayar</label>
+                            <div class="col-md-4">
+                                <label>Tanggal Pembayaran</label>
+                                <input type="date" id="tanggalBayar" class="form-control">
+                            </div>
+                            <div class="col-md-4">
+                                <label>Jumlah Pokok</label>
                                 <input type="number" id="jumlahBayar" class="form-control" placeholder="Contoh: 500000">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label>Biaya Jasa / Bunga</label>
                                 <input type="number" id="jumlahJasa" class="form-control" placeholder="Contoh: 25000" value="0">
                             </div>
                         </div>
-                        <button class="btn btn-warning w-100" onclick="simpanPembayaran()">Simpan Pembayaran & Jasa</button>
+                        <button id="btnSimpanPembayaran" class="btn btn-warning w-100" onclick="simpanPembayaran()">Simpan Pembayaran & Jasa</button>
                     </div>
                 </div>
 
@@ -182,8 +186,11 @@
                     </div>
                 </div>
 
-            </div> </div>
-    </div> <script>
+            </div> 
+        </div>
+    </div> 
+    
+    <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbx06886P4wGev3Jj-P59RVuFfmlEM9lb1vv0rpIxpBLiMyGYL8TvKxMkCYrujvBhqRq/exec";
 
         let anggota = [];
@@ -214,6 +221,11 @@
         function showSection(id){
             document.querySelectorAll('.section').forEach(x => x.classList.remove('active'));
             document.getElementById(id).classList.add('active');
+            
+            // Set default tanggal hari ini khusus untuk menu pembayaran jika dibuka
+            if(id === 'pembayaran'){
+                document.getElementById('tanggalBayar').value = new Date().toISOString().split('T')[0];
+            }
         }
 
         function rupiah(x){
@@ -267,26 +279,54 @@
         async function simpanKasAwal(){
             let jumlah = kasAwalJumlah.value;
             if(jumlah == "") return;
-            await fetch(API_URL, {
-                method: "POST",
-                body: JSON.stringify({
-                    aksi: "tambah", jenis: "kas",
-                    data: [Date.now(), new Date(), new Date().toISOString().split('T')[0], "Pemasukan", "Kas Awal", jumlah]
-                })
-            });
-            alert("Kas awal berhasil");
-            loadData();
+
+            let btn = document.getElementById("btnKasAwal");
+            let originalText = btn.innerText;
+            btn.innerText = "Memproses...";
+            btn.disabled = true;
+
+            try {
+                await fetch(API_URL, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        aksi: "tambah", jenis: "kas",
+                        data: [Date.now(), new Date(), new Date().toISOString().split('T')[0], "Pemasukan", "Kas Awal", jumlah]
+                    })
+                });
+                alert("Kas awal berhasil");
+                kasAwalJumlah.value = "";
+                loadData();
+            } catch (error) {
+                alert("Gagal menyimpan kas awal");
+                console.error(error);
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
         }
 
         async function tambahAnggota(){
             let nama = prompt("Nama"); if(!nama) return;
             let hp = prompt("HP");
             let alamat = prompt("Alamat");
-            await fetch(API_URL, {
-                method: "POST",
-                body: JSON.stringify({ aksi: "tambah", jenis: "anggota", data: [Date.now(), new Date(), nama, hp, alamat] })
-            });
-            loadData();
+
+            let btn = document.getElementById("btnTambahAnggota");
+            let originalText = btn.innerText;
+            btn.innerText = "Menyimpan...";
+            btn.disabled = true;
+
+            try {
+                await fetch(API_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ aksi: "tambah", jenis: "anggota", data: [Date.now(), new Date(), nama, hp, alamat] })
+                });
+                loadData();
+            } catch (error) {
+                alert("Gagal menambah anggota");
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
         }
 
         function renderAnggota(){
@@ -311,27 +351,41 @@
 
             if(!nama || !jumlah || !tanggal){ alert("Lengkapi data"); return; }
 
-            // Jika bukan anggota, kita tambahkan penanda unik di belakang nama, contoh: "Budi (NON)"
-            let namaDisimpan = isNonAnggota ? nama + " (NON)" : nama;
+            // Loading state
+            let btn = document.getElementById("btnSimpanPinjaman");
+            let originalText = btn.innerText;
+            btn.innerText = "Memproses...";
+            btn.disabled = true;
 
-            await fetch(API_URL, {
-                method: "POST",
-                body: JSON.stringify({ aksi: "tambah", jenis: "pinjaman", data: [Date.now(), new Date(), namaDisimpan, jumlah, tanggal] })
-            });
+            try {
+                // Jika bukan anggota, kita tambahkan penanda unik di belakang nama, contoh: "Budi (NON)"
+                let namaDisimpan = isNonAnggota ? nama + " (NON)" : nama;
 
-            await fetch(API_URL, {
-                method: "POST",
-                body: JSON.stringify({
-                    aksi: "tambah", jenis: "kas",
-                    data: [Date.now()+1, new Date(), tanggal, "Pengeluaran", "Pinjaman ke " + namaDisimplian, jumlah]
-                })
-            });
+                await fetch(API_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ aksi: "tambah", jenis: "pinjaman", data: [Date.now(), new Date(), namaDisimpan, jumlah, tanggal] })
+                });
 
-            alert("Pinjaman berhasil disimpan");
-            pinjamJumlah.value = "";
-            document.getElementById("isNonAnggota").checked = false;
-            togglePeminjamType();
-            loadData();
+                await fetch(API_URL, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        aksi: "tambah", jenis: "kas",
+                        data: [Date.now()+1, new Date(), tanggal, "Pengeluaran", "Pinjaman ke " + namaDisimpan, jumlah]
+                    })
+                });
+
+                alert("Pinjaman berhasil disimpan");
+                pinjamJumlah.value = "";
+                document.getElementById("isNonAnggota").checked = false;
+                togglePeminjamType();
+                loadData();
+            } catch (error) {
+                alert("Gagal menyimpan pinjaman");
+                console.error(error);
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
         }
 
         function updateDropdownPinjam(){
@@ -402,7 +456,12 @@
         function infoHutang(){
             let nama = bayarNama.value;
             let dataPinjam = pinjaman.find(x => x[2] == nama);
-            if(!dataPinjam) return;
+            if(!dataPinjam) {
+                iPinjam.innerText = "Rp0";
+                iBayar.innerText = "Rp0";
+                iSisa.innerText = "Rp0";
+                return;
+            }
 
             let totalPinjam = Number(dataPinjam[3]);
             let totalBayar = pembayaran.filter(x => x[2] == nama).reduce((a,b) => a + Number(b[3]), 0);
@@ -413,78 +472,93 @@
             iSisa.innerText = rupiah(sisa);
         }
 
-// ======================
-// SIMPAN PEMBAYARAN
-// ======================
-async function simpanPembayaran(){
-    let nama = bayarNama.value;
-    let jumlah = Number(jumlahBayar.value); // Pastikan dikonversi ke Number
-    let jasa = Number(jumlahJasa.value) || 0; // Pastikan dikonversi ke Number
-    
-    if(!nama || !jumlah) { 
-        alert("Lengkapi data pembayaran!"); 
-        return; 
-    }
+        // ======================
+        // SIMPAN PEMBAYARAN
+        // ======================
+        async function simpanPembayaran(){
+            let nama = bayarNama.value;
+            let jumlah = Number(jumlahBayar.value); // Pastikan dikonversi ke Number
+            let jasa = Number(jumlahJasa.value) || 0; // Pastikan dikonversi ke Number
+            let tanggal = document.getElementById("tanggalBayar").value;
+            
+            if(!nama || !jumlah || !tanggal) { 
+                alert("Lengkapi data pembayaran dan tanggal!"); 
+                return; 
+            }
 
-    // --- MULAI BLOK VALIDASI SISA HUTANG ---
-    // Cari data pinjaman berdasarkan nama yang dipilih
-    let dataPinjam = pinjaman.find(x => x[2] == nama);
-    if(!dataPinjam) {
-        alert("Data pinjaman tidak ditemukan!"); 
-        return;
-    }
+            // --- MULAI BLOK VALIDASI SISA HUTANG ---
+            // Cari data pinjaman berdasarkan nama yang dipilih
+            let dataPinjam = pinjaman.find(x => x[2] == nama);
+            if(!dataPinjam) {
+                alert("Data pinjaman tidak ditemukan!"); 
+                return;
+            }
 
-    // Hitung total pinjaman dan total yang sudah dibayar sejauh ini
-    let totalPinjam = Number(dataPinjam[3]);
-    let totalBayar = pembayaran.filter(x => x[2] == nama).reduce((a,b) => a + Number(b[3]), 0);
-    let sisa = totalPinjam - totalBayar;
+            // Hitung total pinjaman dan total yang sudah dibayar sejauh ini
+            let totalPinjam = Number(dataPinjam[3]);
+            let totalBayar = pembayaran.filter(x => x[2] == nama).reduce((a,b) => a + Number(b[3]), 0);
+            let sisa = totalPinjam - totalBayar;
 
-    // Cek apakah jumlah yang mau dibayar melebihi sisa hutangnya
-    if(jumlah > sisa) {
-        alert(`GAGAL: Jumlah bayar pokok (Rp${jumlah.toLocaleString("id-ID")}) melebihi sisa hutang (Rp${sisa.toLocaleString("id-ID")})!`);
-        return; // Hentikan proses eksekusi kode di sini (jangan kirim ke database)
-    }
-    // --- AKHIR BLOK VALIDASI SISA HUTANG ---
+            // Cek apakah jumlah yang mau dibayar melebihi sisa hutangnya
+            if(jumlah > sisa) {
+                alert(`GAGAL: Jumlah bayar pokok (Rp${jumlah.toLocaleString("id-ID")}) melebihi sisa hutang (Rp${sisa.toLocaleString("id-ID")})!`);
+                return; // Hentikan proses eksekusi kode di sini (jangan kirim ke database)
+            }
+            // --- AKHIR BLOK VALIDASI SISA HUTANG ---
 
-    let tanggal = new Date().toISOString().split('T')[0];
+            // Loading state
+            let btn = document.getElementById("btnSimpanPembayaran");
+            let originalText = btn.innerText;
+            btn.innerText = "Memproses...";
+            btn.disabled = true;
 
-    // 1. Simpan data Pembayaran Pokok
-    await fetch(API_URL, {
-        method: "POST",
-        body: JSON.stringify({ 
-            aksi: "tambah", 
-            jenis: "pembayaran", 
-            data: [Date.now(), new Date(), nama, jumlah, tanggal, "Cicilan Pokok"] 
-        })
-    });
+            try {
+                // 1. Simpan data Pembayaran Pokok
+                await fetch(API_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ 
+                        aksi: "tambah", 
+                        jenis: "pembayaran", 
+                        data: [Date.now(), new Date(), nama, jumlah, tanggal, "Cicilan Pokok"] 
+                    })
+                });
 
-    // 2. Kirim Kas Masuk Pokok
-    await fetch(API_URL, {
-        method: "POST",
-        body: JSON.stringify({
-            aksi: "tambah", 
-            jenis: "kas",
-            data: [Date.now()+1, new Date(), tanggal, "Pemasukan", "Angsuran Pokok dari " + nama.replace(" (NON)", ""), jumlah]
-        })
-    });
+                // 2. Kirim Kas Masuk Pokok
+                await fetch(API_URL, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        aksi: "tambah", 
+                        jenis: "kas",
+                        data: [Date.now()+1, new Date(), tanggal, "Pemasukan", "Angsuran Pokok dari " + nama.replace(" (NON)", ""), jumlah]
+                    })
+                });
 
-    // 3. Jika ada pengisian Biaya Jasa / Bunga, kirim Kas Masuk Tambahan untuk Jasa
-    if(jasa > 0) {
-        await fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify({
-                aksi: "tambah", 
-                jenis: "kas",
-                data: [Date.now()+2, new Date(), tanggal, "Pemasukan", "Pendapatan Jasa/Bunga dari " + nama.replace(" (NON)", ""), jasa]
-            })
-        });
-    }
+                // 3. Jika ada pengisian Biaya Jasa / Bunga, kirim Kas Masuk Tambahan untuk Jasa
+                if(jasa > 0) {
+                    await fetch(API_URL, {
+                        method: "POST",
+                        body: JSON.stringify({
+                            aksi: "tambah", 
+                            jenis: "kas",
+                            data: [Date.now()+2, new Date(), tanggal, "Pemasukan", "Pendapatan Jasa/Bunga dari " + nama.replace(" (NON)", ""), jasa]
+                        })
+                    });
+                }
 
-    alert("Pembayaran dan Jasa berhasil disimpan");
-    jumlahBayar.value = "";
-    jumlahJasa.value = "0";
-    loadData();
-}
+                alert("Pembayaran dan Jasa berhasil disimpan");
+                jumlahBayar.value = "";
+                jumlahJasa.value = "0";
+                document.getElementById("tanggalBayar").value = new Date().toISOString().split('T')[0];
+                infoHutang();
+                loadData();
+            } catch (error) {
+                alert("Gagal menyimpan data pembayaran.");
+                console.error(error);
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
 
         // Menampilkan Kas Bendahara dengan Perhitungan Saldo Kumulatif Akhir
         function renderKas(){
